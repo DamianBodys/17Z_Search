@@ -1,0 +1,464 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This API is a set of functions that provides consumer and supplier with all ecosystem services",
+        "version": "1.0.0",
+        "title": "Internet of Things Analytical Ecosystem API",
+        "contact": {}
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "schemes": [
+        "http"
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "tags": [
+                    "Consumer API",
+                    "Algorithms"
+                ],
+                "summary": "The Algorithms endpoint returns information about the available algorithms. The response includes the display name and o",
+                "description": "The Algorithms endpoint returns information about the available algorithms. The response includes the display name and other details about each algorithm. It also allows full-text search of tags.",
+                "operationId": "getAlgorithms",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "tags",
+                        "in": "query",
+                        "description": "Comma separated Tags for search query.",
+                        "required": false,
+                        "type": "string",
+                        "x-example": "sum two items, sum multiple items"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "An array of algorithms",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Algorithms"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Algorithms",
+                    "Supplier API"
+                ],
+                "summary": "Add a new Algorithm",
+                "description": "Add a new Algorithm",
+                "operationId": "postAlgorithms",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": false,
+                        "schema": {
+                            "$ref": "#/definitions/AlgorithmBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Malformed data",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "401": {
+                        "description": "No authentication. Need to login."
+                    },
+                    "403": {
+                        "description": "Not authorized to post new algorithms"
+                    },
+                    "409": {
+                        "description": "AlgorithmID already exists.",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/algorithms/{algorithmID}": {
+            "get": {
+                "tags": [
+                    "Algorithms",
+                    "Consumer API"
+                ],
+                "summary": "The Algorithm Details endpoint returns detailed description of a given algorithm.",
+                "description": "The Algorithm Details endpoint returns detailed description of a given algorithm.",
+                "operationId": "getAlgorithmsAlgorithm",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "algorithmID",
+                        "in": "path",
+                        "description": "ID of an algorithm",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Details of the algorithm",
+                        "schema": {
+                            "$ref": "#/definitions/AlgorithmDetails"
+                        }
+                    },
+                    "404": {
+                        "description": "The given algorithmID was not found in collection"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Algorithms",
+                    "Consumer API"
+                ],
+                "summary": "Run an algorithm with a Data Set",
+                "description": "Run an algorithm with a Data Set",
+                "consumes": [],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "algorithmID",
+                        "in": "path",
+                        "description": "ID of an algorithm",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Malformed data",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "401": {
+                        "description": "No authentication. Need to login."
+                    },
+                    "403": {
+                        "description": "Not authorized to run algorithms"
+                    },
+                    "404": {
+                        "description": "The given algorithmID was not found in collection"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Algorithms",
+                    "Supplier API"
+                ],
+                "summary": "Replace existing Algorithm",
+                "description": "Replace existing Algorithm",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "algorithmID",
+                        "in": "path",
+                        "description": "ID of an algorithm",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/AlgorithmBody"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Malformed data",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    },
+                    "401": {
+                        "description": "No authentication. Need to login."
+                    },
+                    "403": {
+                        "description": "Not authorized to replace algorithms at all or not an owner of a given algorithm"
+                    },
+                    "404": {
+                        "description": "algorithmID not found"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Algorithms",
+                    "Supplier API"
+                ],
+                "summary": "Delete an algorithm",
+                "description": "Delete an algorithm",
+                "consumes": [],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "algorithmID",
+                        "in": "path",
+                        "description": "ID of an algorithm",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "No authentication. Need to login."
+                    },
+                    "403": {
+                        "description": "Not an owner of the algorithm"
+                    },
+                    "404": {
+                        "description": "algorithmID not found"
+                    }
+                }
+            }
+        },
+        "/algorithms/{algorithmID}/{resultsetID}": {
+            "get": {
+                "tags": [
+                    "Algorithms",
+                    "Consumer API"
+                ],
+                "summary": "The Result Set endpoint returns result set data for a given algorithm and ID.",
+                "description": "The Result Set endpoint returns result set data for a given algorithm and ID.",
+                "operationId": "getAlgorithmsAlgorithmResultsetID",
+                "consumes": [],
+                "produces": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "name": "algorithmID",
+                        "in": "path",
+                        "description": "ID of an algorithm",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "resultsetID",
+                        "in": "path",
+                        "description": "ID of the result-set",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "102": {
+                        "description": "The job is in progress"
+                    },
+                    "200": {
+                        "description": "A resulting set of data.",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/ResultSet"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Not authenticated. Need to login."
+                    },
+                    "403": {
+                        "description": "Not the proper owner of that result-set"
+                    },
+                    "404": {
+                        "description": "Wrong resultsetID or algorithmID",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Algorithms",
+                    "Consumer API"
+                ],
+                "summary": "Confirm Result-Set receive and request deletion.",
+                "description": "Confirm Result-Set receive and request deletion.",
+                "consumes": [],
+                "produces": [],
+                "parameters": [
+                    {
+                        "name": "algorithmID",
+                        "in": "path",
+                        "description": "ID of an algorithm",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "resultsetID",
+                        "in": "path",
+                        "description": "ID of the result-set",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Not authenticated. Need to login."
+                    },
+                    "403": {
+                        "description": "Not the proper owner of that result-set"
+                    },
+                    "404": {
+                        "description": "Wrong resultsetID or algorithmID",
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "AlgorithmBody": {
+            "type": "object",
+            "properties": {
+                "algorithmBLOB": {
+                    "type": "string",
+                    "description": "The main algorithm program, definitions, data etc."
+                },
+                "algorithmDescription": {
+                    "type": "string",
+                    "description": "detailed description of the algorithm."
+                },
+                "algorithmId": {
+                    "type": "string",
+                    "description": "Unique identifier representing a specific algorithm."
+                },
+                "algorithmSummary": {
+                    "type": "string",
+                    "description": "Brief summary of the algorithm."
+                },
+                "dataSetDescription": {
+                    "type": "string",
+                    "description": "detailed description of that algorithm data set."
+                },
+                "displayName": {
+                    "type": "string",
+                    "description": "Display name of the algorithm."
+                },
+                "linkURL": {
+                    "type": "string",
+                    "description": "detailed url of the algorithm."
+                }
+            },
+            "description": "All the data to needed to store an algorithm"
+        },
+        "AlgorithmDetails": {
+            "type": "object",
+            "properties": {
+                "algorithmDescription": {
+                    "type": "string",
+                    "description": "detailed description of the algorithm."
+                },
+                "algorithmId": {
+                    "type": "string",
+                    "description": "Unique identifier representing a specific algorithm."
+                },
+                "algorithmSummary": {
+                    "type": "string",
+                    "description": "Brief summary of the algorithm."
+                },
+                "dataSetDescription": {
+                    "type": "string",
+                    "description": "detailed description of that algorithm data set."
+                },
+                "displayName": {
+                    "type": "string",
+                    "description": "Display name of the algorithm."
+                },
+                "linkURL": {
+                    "type": "string",
+                    "description": "detailed url of the algorithm."
+                }
+            }
+        },
+        "Algorithms": {
+            "type": "object",
+            "properties": {
+                "algorithmId": {
+                    "type": "string",
+                    "description": "Unique identifier representing a specific algorithm."
+                },
+                "algorithmSummary": {
+                    "type": "string",
+                    "description": "Brief summary of the algorithm."
+                },
+                "displayName": {
+                    "type": "string",
+                    "description": "Display name of the algorithm."
+                },
+                "linkURL": {
+                    "type": "string",
+                    "description": "detailed url of the algorithm."
+                }
+            }
+        },
+        "Error": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "format": "int32"
+                },
+                "fields": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "ResultSet": {
+            "type": "object",
+            "properties": {
+                "resultSet": {
+                    "type": "string",
+                    "description": "Resultant set of data."
+                }
+            }
+        }
+    }
+}

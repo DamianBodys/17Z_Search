@@ -1,0 +1,22 @@
+application: plsearchexample
+version: 1
+runtime: python27
+threadsafe: true
+api_version: 1
+
+handlers:
+- url: /swaggerui
+  static_dir: static/swaggerui
+  
+- url: /doc
+  script: doc.app
+  
+- url: /swagger\.yaml
+  static_files: static/swagger.yaml
+  upload: static/swagger\.yaml
+
+- url: /swagger.json
+  script: swagger.app
+
+- url: .*
+  script: search_algorithm.application
