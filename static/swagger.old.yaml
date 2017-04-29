@@ -1,12 +1,14 @@
 swagger: '2.0'
 info:
   description: >-
-    This API is a way to implement Google Search Engine into GAE Flexible
+    This API is a set of functions that provides consumer and supplier with all
+    ecosystem services
   version: 1.0.0
-  title: Internet of Things Analytical Ecosystem Search Internal API
+  title: Internet of Things Analytical Ecosystem API
   contact: {}
 host: 'localhost:8080'
 basePath: /
+
 schemes:
   - http
 paths:
@@ -16,7 +18,7 @@ paths:
         - Algorithms
       summary: >-
         The Algorithms endpoint returns information about the available
-        algorithms.
+        algorithms. The response includes the display name and o
       description: >-
         The Algorithms endpoint returns information about the available
         algorithms. The response includes the display name and other details
@@ -53,7 +55,7 @@ paths:
           name: body
           required: false
           schema:
-            $ref: '#/definitions/Algorithms'
+            $ref: '#/definitions/AlgorithmBody'
       responses:
         '200':
           description: OK
@@ -69,7 +71,24 @@ paths:
           description: AlgorithmID already exists.
           schema:
             $ref: '#/definitions/Error'
+  
 definitions:
+  AlgorithmBody:
+    type: object
+    properties:
+      algorithmId:
+        type: string
+        description: Unique identifier representing a specific algorithm.
+      algorithmSummary:
+        type: string
+        description: Brief summary of the algorithm.
+      displayName:
+        type: string
+        description: Display name of the algorithm.
+      linkURL:
+        type: string
+        description: detailed url of the algorithm.
+    description: All the data to needed to store an algorithm
   Algorithms:
     type: object
     properties:
