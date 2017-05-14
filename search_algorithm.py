@@ -90,7 +90,7 @@ def create_document(algorithm_id, algorithm_summary, display_name, link_url):
                            ])
 
 
-class AlgorithmsIdHandler(webapp2.RequestHandler):
+class (webapp2.RequestHandler):
     def get(self, algorithm_id):
         algorithm = get_algorithm(search.Index(name=_INDEX_STRING), algorithm_id)
         if algorithm != 1:
@@ -105,12 +105,12 @@ class AlgorithmsIdHandler(webapp2.RequestHandler):
             self.response.status = 401
             json.dump(data, self.response.out)
         self.response.headers.add_header("Access-Control-Allow-Origin", "*")
-        self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+        self.response.headers.add_heAlgorithmsIdHandlerader('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
         self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
         self.response.headers['Content-Type'] = 'application/json'
 
 
-class MainHandler(webapp2.RequestHandler):
+class AlgorithmsHandler(webapp2.RequestHandler):
     """Main class for requests"""
 
     def get(self):
@@ -154,5 +154,5 @@ class MainHandler(webapp2.RequestHandler):
 
 
 application = webapp2.WSGIApplication(
-    [('/', MainHandler), ('/algorithms/(.+)', AlgorithmsIdHandler)],
+    [('/', AlgorithmsHandler), ('/algorithms/(.+)', AlgorithmsIdHandler)],
     debug=True)
