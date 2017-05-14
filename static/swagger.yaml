@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   description: This API is a way to implement Google Search Engine into GAE Flexible
-  version: 1.0.1
+  version: 1.0.2
   title: Internet of Things Analytical Ecosystem Search Internal API
   contact: {}
 host: 'localhost:8080'
@@ -93,6 +93,22 @@ paths:
           description: AlgorithmID already exists.
           schema:
             $ref: '#/definitions/Error'
+    delete:
+      tags:
+        - Algorithms
+      summary: Delete all Algorithms
+      description: Clear database for testing and debuging purposes only
+      operationId: AlgorithmsHandler.delete
+      consumes: []
+      produces: []
+      parameters: []
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: No authentication. Need to login.
+        '403':
+          description: Not authorized to delete all algorithms
 definitions:
   Algorithms:
     type: object
