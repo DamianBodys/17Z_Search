@@ -90,7 +90,7 @@ def create_document(algorithm_id, algorithm_summary, display_name, link_url):
                            ])
 
 
-class (webapp2.RequestHandler):
+class AlgorithmsIdHandler(webapp2.RequestHandler):
     def get(self, algorithm_id):
         algorithm = get_algorithm(search.Index(name=_INDEX_STRING), algorithm_id)
         if algorithm != 1:
