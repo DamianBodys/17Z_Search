@@ -15,6 +15,25 @@ from google.appengine.api import search
 _INDEX_STRING = 'algorithms'
 
 
+def del_all(index_object):
+    """
+    Deletes all algorithms to clear database. No use case. Just to start over for debugging and reiterating while testing.
+    <index_object>.get_range() returns max 100 docs so we have iterate to clear it all.
+    Batch deleting is quicker and is restricted to 200 > 100 so its easy to iterate in while loop
+    :param index_object: 
+    :return: 
+    """
+    while True:
+        documents = index_object.get_range(ids_only=True)
+        id_s = []
+        for document in documents:
+            id_s.append(document.doc_id)
+        if len(id_s) == 0:
+            # break if there are no more documents
+            break
+        index_object.delete(id_s)
+
+
 def query_algorithms(index_object, query_string='', sort_options_object=None):
     """
     Queries the Full Text Search database and returns all results
@@ -151,6 +170,14 @@ class AlgorithmsHandler(webapp2.RequestHandler):
             self.response.headers['Content-Type'] = 'application/json'
             self.response.status = 400
             json.dump(data, self.response.out)
+
+    def delete(self):
+        """
+        Delete all Algorithms from Full Text Search
+        Just to clear database for testing purposes.
+        """
+        del_all(search.Index(name=_INDEX_STRING))
+        self.response.status = 200
 
 
 application = webapp2.WSGIApplication(
