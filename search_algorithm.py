@@ -124,7 +124,7 @@ class AlgorithmsIdHandler(webapp2.RequestHandler):
             self.response.status = 401
             json.dump(data, self.response.out)
         self.response.headers.add_header("Access-Control-Allow-Origin", "*")
-        self.response.headers.add_heAlgorithmsIdHandlerader('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+        self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
         self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
         self.response.headers['Content-Type'] = 'application/json'
 
