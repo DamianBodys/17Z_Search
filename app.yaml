@@ -1,4 +1,4 @@
-application: 17Zsearch1
+application: zsearch1
 version: 2
 runtime: python27
 threadsafe: true
