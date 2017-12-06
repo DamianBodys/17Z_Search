@@ -60,12 +60,12 @@
         ],
         "parameters": [
           {
-            "name": "tags",
+            "name": "query",
             "in": "query",
-            "description": "Comma separated Tags for search query.",
+            "description": "Tags for search query.",
             "required": false,
             "type": "string",
-            "x-example": "sum two items, sum multiple items"
+            "x-example": "sum subtract"
           }
         ],
         "responses": {
