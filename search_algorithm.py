@@ -1,8 +1,4 @@
-#!/usr/bin/python
-#
-# Copyright 2011 Google Inc. All Rights Reserved.
-
-"""A simple guest book app that demonstrates the App Engine search API."""
+"""Api for searching algorithms in App Engine search API."""
 
 
 from datetime import datetime
