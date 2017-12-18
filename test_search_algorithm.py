@@ -17,44 +17,85 @@ from google.appengine.ext import testbed
 from google.appengine.api import search
 
 
+def createTestAlgorithmList(datalist, length):
+    """Prepare test data as list by name datalist given by reference
+     of length algorithm descriptions"""
+    for i in range(length):
+        data={}
+        data['algorithmId'] = 'algorithmId' + str(i)
+        data['algorithmSummary'] = 'algorithmSummary' + str(i)
+        data['displayName'] = 'displayName' + str(i)
+        data['linkURL'] = 'linkURL' + str(i)
+        datalist.append(data)
+
 
 class SearchTestCase(unittest.TestCase):
     def setUp(self):
         self.testapp = webtest.TestApp(search_algorithm.application)
         self.testbed = testbed.Testbed()
         self.testbed.activate()
+        self.testbed.init_search_stub()
 
     def tearDown(self):
         self.testbed.deactivate()
 
     def testEmpty_AlgorithmsHandler(self):
-        self.testbed.init_search_stub()
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int)
         self.assertEqual('[]', response.normal_body)
         self.assertEqual('application/json', response.content_type)
 
     def testOneAlgorithm_AlgorithmsHandler(self):
-        self.testbed.init_search_stub()
-        data={}
-        data['algorithmId']='algorithmId1'
-        data['algorithmSummary']='algorithmSummary1'
-        data['displayName']='displayName1'
-        data['linkURL']='linkURL1'
-        datalist=[]
-        datalist.append(data)
-        document = search_algorithm.create_document(datalist[0]['algorithmId'],
-                                                    datalist[0]['algorithmSummary'],
-                                                    datalist[0]['displayName'],
-                                                    datalist[0]['linkURL'])
+        wronglist = []
+        rightlist = []
+        createTestAlgorithmList(wronglist, 1)
+        createTestAlgorithmList(rightlist, 1)
+        wronglist[0]['linkURL'] = 'wrongLinkURL'
+        document = search_algorithm.create_document(rightlist[0]['algorithmId'],
+                                                    rightlist[0]['algorithmSummary'],
+                                                    rightlist[0]['displayName'],
+                                                    rightlist[0]['linkURL'])
         search.Index(name=search_algorithm._INDEX_STRING).put(document)
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int)
-        #datalist[0]['linkURL'] = u'changedLinkURL'
-        self.assertListEqual(datalist,json.loads(response.normal_body))
+        self.assertListEqual(rightlist, json.loads(response.normal_body))
+        self.assertNotIn(wronglist[0], json.loads(response.normal_body))
+        self.assertEqual('application/json', response.content_type)
 
-        #self.assertEqual('[{"algorithmSummary": "algorithmSummary1", "algorithmId": "algorithmId1", "displayName": "displayName1", "linkURL": "linkURL1"}]',
-        #                   response.normal_body)
+    def testTwoAlgorithms_AlgorithmsHandler(self):
+        wronglist = []
+        rightlist = []
+        createTestAlgorithmList(wronglist, 2)
+        createTestAlgorithmList(rightlist, 2)
+        wronglist[0]['linkURL'] = 'wrongLinkURL'
+        for i in range(2):
+            document = search_algorithm.create_document(rightlist[i]['algorithmId'],
+                                                        rightlist[i]['algorithmSummary'],
+                                                        rightlist[i]['displayName'],
+                                                        rightlist[i]['linkURL'])
+            search.Index(name=search_algorithm._INDEX_STRING).put(document)
+        response = self.testapp.get('/')
+        self.assertEqual(200, response.status_int)
+        self.assertItemsEqual(rightlist, json.loads(response.normal_body))
+        self.assertNotIn(wronglist[0], json.loads(response.normal_body))
+        self.assertEqual('application/json', response.content_type)
+
+    def test100Algorithms_AlgorithmsHandler(self):
+        wronglist = []
+        rightlist = []
+        createTestAlgorithmList(wronglist, 1)
+        createTestAlgorithmList(rightlist, 100)
+        wronglist[0]['linkURL'] = 'wrongLinkURL'
+        for i in range(100):
+            document = search_algorithm.create_document(rightlist[i]['algorithmId'],
+                                                        rightlist[i]['algorithmSummary'],
+                                                        rightlist[i]['displayName'],
+                                                        rightlist[i]['linkURL'])
+            search.Index(name=search_algorithm._INDEX_STRING).put(document)
+        response = self.testapp.get('/')
+        self.assertEqual(200, response.status_int)
+        self.assertItemsEqual(rightlist, json.loads(response.normal_body))
+        self.assertNotIn(wronglist[0], json.loads(response.normal_body))
         self.assertEqual('application/json', response.content_type)
 
 
