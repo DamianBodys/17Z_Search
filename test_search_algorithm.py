@@ -29,6 +29,15 @@ def create_test_algorithm_list(data_list, length):
         data_list.append(data)
 
 
+def create_test_documents_list(data_list, documents, length):
+    """ Prepare test documents"""
+    for i in range(length):
+        document = search_algorithm.create_document(data_list[i]['algorithmId'],
+                                                    data_list[i]['algorithmSummary'],
+                                                    data_list[i]['displayName'],
+                                                    data_list[i]['linkURL'])
+        documents.append(document)
+
 class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
     def setUp(self):
         self.testapp = webtest.TestApp(search_algorithm.application)
@@ -143,18 +152,30 @@ class SearchTestCaseUnittest(unittest.TestCase):
         right_list = []
         create_test_algorithm_list(right_list, 101)
         documents = []
-        for i in range(101):
-            document = search_algorithm.create_document(right_list[i]['algorithmId'],
-                                                        right_list[i]['algorithmSummary'],
-                                                        right_list[i]['displayName'],
-                                                        right_list[i]['linkURL'])
-            documents.append(document)
+        create_test_documents_list(right_list, documents, 101)
         index = search.Index(name=search_algorithm._INDEX_STRING)
         index.put(documents)
         result = search_algorithm.query_algorithms(index)
         self.assertEqual(101, len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
 
+    def test200queryAlgorithms_query_algorithms(self):
+        """Tests if 200 algorithms are returned from database containing only 200 algorithms by query of string
+        algorithms which will be is present in every test algorithm in field displayName == 'algorithm <id>'
+        """
+        query_string = 'algorithm'
+        right_list = []
+        create_test_algorithm_list(right_list, 200)
+        # changing right list to contain string 'algorithm' separated from <number> in every displayName field
+        for algorithm in right_list:
+            algorithm['displayName'] = 'algorithm ' + algorithm['displayName'].split('displayName')[1]
+        documents = []
+        create_test_documents_list(right_list, documents, 200)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        result = search_algorithm.query_algorithms(index,query_string)
+        self.assertEqual(200, len(result), msg='Wrong number of algorithms')
+        self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
 
 if __name__ == '__main__':
     unittest.main()
