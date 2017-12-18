@@ -42,13 +42,19 @@ def query_algorithms(index_object, query_string='', sort_options_object=None):
     algorithms_list = []
 
     if query_string == '' and sort_options_object is None:
-        results = index_object.get_range()
-        for found_document in results:
-            algorithm_index_dict = {}
-            for field in found_document.fields:
-                if field.name != 'date':
-                    algorithm_index_dict[field.name] = field.value
-            algorithms_list.append(algorithm_index_dict)
+        start_id = None
+        while True:
+            results = index_object.get_range(start_id, include_start_object=False)
+            if len(results.results) == 0:
+                # break if there are no more documents
+                break
+            for found_document in results:
+                start_id = found_document.doc_id
+                algorithm_index_dict = {}
+                for field in found_document.fields:
+                    if field.name != 'date':
+                        algorithm_index_dict[field.name] = field.value
+                algorithms_list.append(algorithm_index_dict)
     else:
         cursor = search.Cursor()
         while cursor:

@@ -124,26 +124,26 @@ class SearchTestCase(unittest.TestCase):
         self.assertEqual(101, len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
 
-    # def test101Algorithms_AlgorithmsHandler(self):
-    #     """Tests if 101 algorithms are returned from database containing only 101 algorithms
-    #     It should fail if <index_object>.get_range() is used because it returns only
-    #      100 results"""
-    #     wrong_list = []
-    #     right_list = []
-    #     create_test_algorithm_list(wrong_list, 1)
-    #     create_test_algorithm_list(right_list, 101)
-    #     wrong_list[0]['linkURL'] = 'wrongLinkURL'
-    #     for i in range(101):
-    #         document = search_algorithm.create_document(right_list[i]['algorithmId'],
-    #                                                     right_list[i]['algorithmSummary'],
-    #                                                     right_list[i]['displayName'],
-    #                                                     right_list[i]['linkURL'])
-    #         search.Index(name=search_algorithm._INDEX_STRING).put(document)
-    #     response = self.testapp.get('/')
-    #     self.assertEqual(200, response.status_int)
-    #     self.assertItemsEqual(right_list, json.loads(response.normal_body))
-    #     self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
-    #     self.assertEqual('application/json', response.content_type)
+    def test101Algorithms_AlgorithmsHandler(self):
+        """Tests if 101 algorithms are returned from database containing only 101 algorithms
+        It should fail if <index_object>.get_range() is used because it returns only
+         100 results"""
+        wrong_list = []
+        right_list = []
+        create_test_algorithm_list(wrong_list, 1)
+        create_test_algorithm_list(right_list, 101)
+        wrong_list[0]['linkURL'] = 'wrongLinkURL'
+        for i in range(101):
+            document = search_algorithm.create_document(right_list[i]['algorithmId'],
+                                                        right_list[i]['algorithmSummary'],
+                                                        right_list[i]['displayName'],
+                                                        right_list[i]['linkURL'])
+            search.Index(name=search_algorithm._INDEX_STRING).put(document)
+        response = self.testapp.get('/')
+        self.assertEqual(200, response.status_int)
+        self.assertItemsEqual(right_list, json.loads(response.normal_body))
+        self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
+        self.assertEqual('application/json', response.content_type)
 
 
 
