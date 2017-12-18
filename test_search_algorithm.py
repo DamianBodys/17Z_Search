@@ -17,8 +17,8 @@ from google.appengine.ext import testbed
 from google.appengine.api import search
 
 
-def create_test_algorithm_list(datalist, length):
-    """Prepare test data as list by name datalist given by reference
+def create_test_algorithm_list(data_list, length):
+    """Prepare test data as list by name data_list given by reference
      of length algorithm descriptions"""
     for i in range(length):
         data={}
@@ -26,7 +26,7 @@ def create_test_algorithm_list(datalist, length):
         data['algorithmSummary'] = 'algorithmSummary' + str(i)
         data['displayName'] = 'displayName' + str(i)
         data['linkURL'] = 'linkURL' + str(i)
-        datalist.append(data)
+        data_list.append(data)
 
 
 class SearchTestCase(unittest.TestCase):
