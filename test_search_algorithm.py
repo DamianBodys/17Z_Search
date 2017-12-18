@@ -29,7 +29,7 @@ def create_test_algorithm_list(data_list, length):
         data_list.append(data)
 
 
-class SearchTestCase(unittest.TestCase):
+class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
     def setUp(self):
         self.testapp = webtest.TestApp(search_algorithm.application)
         self.testbed = testbed.Testbed()
@@ -106,24 +106,6 @@ class SearchTestCase(unittest.TestCase):
                          msg='The list of algorithms contains nonexistent data')
         self.assertEqual('application/json', response.content_type, msg='Wrong content type of an answer')
 
-    def test101Algorithms_query_algorithms(self):
-        """Tests if 101 algorithms are returned from database containing only 101 algorithms
-        It should fail if <index_object>.get_range() is used because it returns only 100 results"""
-        right_list = []
-        create_test_algorithm_list(right_list, 101)
-        documents = []
-        for i in range(101):
-            document = search_algorithm.create_document(right_list[i]['algorithmId'],
-                                                        right_list[i]['algorithmSummary'],
-                                                        right_list[i]['displayName'],
-                                                        right_list[i]['linkURL'])
-            documents.append(document)
-        index = search.Index(name=search_algorithm._INDEX_STRING)
-        index.put(documents)
-        result = search_algorithm.query_algorithms(index)
-        self.assertEqual(101, len(result), msg='Wrong number of algorithms')
-        self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
-
     def test101Algorithms_AlgorithmsHandler(self):
         """Tests if 101 algorithms are returned from database containing only 101 algorithms
         It should fail if <index_object>.get_range() is used because it returns only
@@ -145,6 +127,33 @@ class SearchTestCase(unittest.TestCase):
         self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
         self.assertEqual('application/json', response.content_type)
 
+
+class SearchTestCaseUnittest(unittest.TestCase):
+    def setUp(self):
+        self.testbed = testbed.Testbed()
+        self.testbed.activate()
+        self.testbed.init_search_stub()
+
+    def tearDown(self):
+        self.testbed.deactivate()
+
+    def test101Algorithms_query_algorithms(self):
+        """Tests if 101 algorithms are returned from database containing only 101 algorithms
+        It should fail if <index_object>.get_range() is used because it returns only 100 results"""
+        right_list = []
+        create_test_algorithm_list(right_list, 101)
+        documents = []
+        for i in range(101):
+            document = search_algorithm.create_document(right_list[i]['algorithmId'],
+                                                        right_list[i]['algorithmSummary'],
+                                                        right_list[i]['displayName'],
+                                                        right_list[i]['linkURL'])
+            documents.append(document)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        result = search_algorithm.query_algorithms(index)
+        self.assertEqual(101, len(result), msg='Wrong number of algorithms')
+        self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
 
 
 if __name__ == '__main__':
