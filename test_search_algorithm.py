@@ -50,99 +50,99 @@ class SearchTestCase(unittest.TestCase):
 
     def testOneAlgorithm_AlgorithmsHandler(self):
         """Tests if only one algorithm is returned from database containing only one algorithm"""
-        wronglist = []
-        rightlist = []
-        create_test_algorithm_list(wronglist, 1)
-        create_test_algorithm_list(rightlist, 1)
-        wronglist[0]['linkURL'] = 'wrongLinkURL'
-        document = search_algorithm.create_document(rightlist[0]['algorithmId'],
-                                                    rightlist[0]['algorithmSummary'],
-                                                    rightlist[0]['displayName'],
-                                                    rightlist[0]['linkURL'])
+        wrong_list = []
+        right_list = []
+        create_test_algorithm_list(wrong_list, 1)
+        create_test_algorithm_list(right_list, 1)
+        wrong_list[0]['linkURL'] = 'wrongLinkURL'
+        document = search_algorithm.create_document(right_list[0]['algorithmId'],
+                                                    right_list[0]['algorithmSummary'],
+                                                    right_list[0]['displayName'],
+                                                    right_list[0]['linkURL'])
         search.Index(name=search_algorithm._INDEX_STRING).put(document)
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int)
-        self.assertListEqual(rightlist, json.loads(response.normal_body))
-        self.assertNotIn(wronglist[0], json.loads(response.normal_body))
+        self.assertListEqual(right_list, json.loads(response.normal_body))
+        self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
         self.assertEqual('application/json', response.content_type)
 
     def testTwoAlgorithms_AlgorithmsHandler(self):
         """Tests if only two algorithms are returned from database containing only 2 algorithms"""
-        wronglist = []
-        rightlist = []
-        create_test_algorithm_list(wronglist, 2)
-        create_test_algorithm_list(rightlist, 2)
-        wronglist[0]['linkURL'] = 'wrongLinkURL'
+        wrong_list = []
+        right_list = []
+        create_test_algorithm_list(wrong_list, 2)
+        create_test_algorithm_list(right_list, 2)
+        wrong_list[0]['linkURL'] = 'wrongLinkURL'
         for i in range(2):
-            document = search_algorithm.create_document(rightlist[i]['algorithmId'],
-                                                        rightlist[i]['algorithmSummary'],
-                                                        rightlist[i]['displayName'],
-                                                        rightlist[i]['linkURL'])
+            document = search_algorithm.create_document(right_list[i]['algorithmId'],
+                                                        right_list[i]['algorithmSummary'],
+                                                        right_list[i]['displayName'],
+                                                        right_list[i]['linkURL'])
             search.Index(name=search_algorithm._INDEX_STRING).put(document)
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int)
-        self.assertItemsEqual(rightlist, json.loads(response.normal_body))
-        self.assertNotIn(wronglist[0], json.loads(response.normal_body))
+        self.assertItemsEqual(right_list, json.loads(response.normal_body))
+        self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
         self.assertEqual('application/json', response.content_type)
 
     def test100Algorithms_AlgorithmsHandler(self):
         """Tests if 100 algorithms are returned from database containing only 100 algorithms"""
-        wronglist = []
-        rightlist = []
-        create_test_algorithm_list(wronglist, 1)
-        create_test_algorithm_list(rightlist, 100)
-        wronglist[0]['linkURL'] = 'wrongLinkURL'
+        wrong_list = []
+        right_list = []
+        create_test_algorithm_list(wrong_list, 1)
+        create_test_algorithm_list(right_list, 100)
+        wrong_list[0]['linkURL'] = 'wrongLinkURL'
         for i in range(100):
-            document = search_algorithm.create_document(rightlist[i]['algorithmId'],
-                                                        rightlist[i]['algorithmSummary'],
-                                                        rightlist[i]['displayName'],
-                                                        rightlist[i]['linkURL'])
+            document = search_algorithm.create_document(right_list[i]['algorithmId'],
+                                                        right_list[i]['algorithmSummary'],
+                                                        right_list[i]['displayName'],
+                                                        right_list[i]['linkURL'])
             search.Index(name=search_algorithm._INDEX_STRING).put(document)
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int, msg='The response was other then 200 OK')
-        self.assertItemsEqual(rightlist, json.loads(response.normal_body),
+        self.assertItemsEqual(right_list, json.loads(response.normal_body),
                               msg='The list of algorithms is not the same as in database')
-        self.assertNotIn(wronglist[0], json.loads(response.normal_body),
+        self.assertNotIn(wrong_list[0], json.loads(response.normal_body), 
                          msg='The list of algorithms contains nonexistent data')
         self.assertEqual('application/json', response.content_type, msg='Wrong content type of an answer')
 
     def test101Algorithms_query_algorithms(self):
         """Tests if 101 algorithms are returned from database containing only 101 algorithms
         It should fail if <index_object>.get_range() is used because it returns only 100 results"""
-        rightlist = []
-        create_test_algorithm_list(rightlist, 101)
+        right_list = []
+        create_test_algorithm_list(right_list, 101)
         documents = []
         for i in range(101):
-            document = search_algorithm.create_document(rightlist[i]['algorithmId'],
-                                                        rightlist[i]['algorithmSummary'],
-                                                        rightlist[i]['displayName'],
-                                                        rightlist[i]['linkURL'])
+            document = search_algorithm.create_document(right_list[i]['algorithmId'],
+                                                        right_list[i]['algorithmSummary'],
+                                                        right_list[i]['displayName'],
+                                                        right_list[i]['linkURL'])
             documents.append(document)
         index = search.Index(name=search_algorithm._INDEX_STRING)
         index.put(documents)
         result = search_algorithm.query_algorithms(index)
-        self.assertEqual(101,len(result), msg='Wrong number of algorithms')
-        self.assertItemsEqual(rightlist, result, msg='Discrepancy in returned algorithms')
+        self.assertEqual(101, len(result), msg='Wrong number of algorithms')
+        self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
 
     # def test101Algorithms_AlgorithmsHandler(self):
     #     """Tests if 101 algorithms are returned from database containing only 101 algorithms
     #     It should fail if <index_object>.get_range() is used because it returns only
     #      100 results"""
-    #     wronglist = []
-    #     rightlist = []
-    #     create_test_algorithm_list(wronglist, 1)
-    #     create_test_algorithm_list(rightlist, 101)
-    #     wronglist[0]['linkURL'] = 'wrongLinkURL'
+    #     wrong_list = []
+    #     right_list = []
+    #     create_test_algorithm_list(wrong_list, 1)
+    #     create_test_algorithm_list(right_list, 101)
+    #     wrong_list[0]['linkURL'] = 'wrongLinkURL'
     #     for i in range(101):
-    #         document = search_algorithm.create_document(rightlist[i]['algorithmId'],
-    #                                                     rightlist[i]['algorithmSummary'],
-    #                                                     rightlist[i]['displayName'],
-    #                                                     rightlist[i]['linkURL'])
+    #         document = search_algorithm.create_document(right_list[i]['algorithmId'],
+    #                                                     right_list[i]['algorithmSummary'],
+    #                                                     right_list[i]['displayName'],
+    #                                                     right_list[i]['linkURL'])
     #         search.Index(name=search_algorithm._INDEX_STRING).put(document)
     #     response = self.testapp.get('/')
     #     self.assertEqual(200, response.status_int)
-    #     self.assertItemsEqual(rightlist, json.loads(response.normal_body))
-    #     self.assertNotIn(wronglist[0], json.loads(response.normal_body))
+    #     self.assertItemsEqual(right_list, json.loads(response.normal_body))
+    #     self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
     #     self.assertEqual('application/json', response.content_type)
 
 
