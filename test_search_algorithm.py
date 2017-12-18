@@ -41,7 +41,7 @@ class SearchTestCase(unittest.TestCase):
         search.Index(name=search_algorithm._INDEX_STRING).put(document)
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int)
-        datalist[0]['linkURL'] = u'changedLinkURL'
+        #datalist[0]['linkURL'] = u'changedLinkURL'
         self.assertListEqual(datalist,json.loads(response.normal_body))
 
         #self.assertEqual('[{"algorithmSummary": "algorithmSummary1", "algorithmId": "algorithmId1", "displayName": "displayName1", "linkURL": "linkURL1"}]',
