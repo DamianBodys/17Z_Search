@@ -104,9 +104,28 @@ class SearchTestCase(unittest.TestCase):
         self.assertNotIn(wronglist[0], json.loads(response.normal_body))
         self.assertEqual('application/json', response.content_type)
 
-    def test101Algorithms_AlgorithmsHandler(self):
+    def test101Algorithms_query_algorithms(self):
         """Tests if 101 algorithms are returned from database containing only 101 algorithms
         It should fail if <index_object>.get_range() is used because it returns only 100 results"""
+        rightlist = []
+        createTestAlgorithmList(rightlist, 101)
+        documents = []
+        for i in range(101):
+            document = search_algorithm.create_document(rightlist[i]['algorithmId'],
+                                                        rightlist[i]['algorithmSummary'],
+                                                        rightlist[i]['displayName'],
+                                                        rightlist[i]['linkURL'])
+            documents.append(document)
+        index=search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        result=search_algorithm.query_algorithms(index)
+        self.assertEqual(101,len(result),msg='Wrong number of algorithms')
+        self.assertItemsEqual(rightlist, result, msg='Discrepancy in returned algorithms')
+
+    def test101Algorithms_AlgorithmsHandler(self):
+        """Tests if 101 algorithms are returned from database containing only 101 algorithms
+        It should fail if <index_object>.get_range() is used because it returns only
+         100 results"""
         wronglist = []
         rightlist = []
         createTestAlgorithmList(wronglist, 1)
@@ -120,7 +139,6 @@ class SearchTestCase(unittest.TestCase):
             search.Index(name=search_algorithm._INDEX_STRING).put(document)
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int)
-        print response.normal_body
         self.assertItemsEqual(rightlist, json.loads(response.normal_body))
         self.assertNotIn(wronglist[0], json.loads(response.normal_body))
         self.assertEqual('application/json', response.content_type)
