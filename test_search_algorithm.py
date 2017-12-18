@@ -1,6 +1,6 @@
-"""Its very important to install in virtualenv
+"""It's very important to install in virtualenv
 pip install WebTest
-also either insert google_appengine, webapp and jinja  libraries in PyCharm library script
+also either insert google_appengine, webapp jinja and yaml libraries in PyCharm library script
 according to this https://www.enkisoftware.com/devlogpost-20141231-1-Python_Google_App_Engine_debugging_with_PyCharm_CE
 or uncomment lines below
 import sys
