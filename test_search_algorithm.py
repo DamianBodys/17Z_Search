@@ -40,12 +40,16 @@ class SearchTestCase(unittest.TestCase):
         self.testbed.deactivate()
 
     def testEmpty_AlgorithmsHandler(self):
+        """
+        Tests if empty database is returned
+        """
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int)
         self.assertEqual('[]', response.normal_body)
         self.assertEqual('application/json', response.content_type)
 
     def testOneAlgorithm_AlgorithmsHandler(self):
+        """Tests if only one algorithm is returned from database containing only one algorithm"""
         wronglist = []
         rightlist = []
         createTestAlgorithmList(wronglist, 1)
@@ -63,6 +67,7 @@ class SearchTestCase(unittest.TestCase):
         self.assertEqual('application/json', response.content_type)
 
     def testTwoAlgorithms_AlgorithmsHandler(self):
+        """Tests if only two algorithms are returned from database containing only 2 algorithms"""
         wronglist = []
         rightlist = []
         createTestAlgorithmList(wronglist, 2)
@@ -81,6 +86,7 @@ class SearchTestCase(unittest.TestCase):
         self.assertEqual('application/json', response.content_type)
 
     def test100Algorithms_AlgorithmsHandler(self):
+        """Tests if 100 algorithms are returned from database containing only 100 algorithms"""
         wronglist = []
         rightlist = []
         createTestAlgorithmList(wronglist, 1)
@@ -97,6 +103,28 @@ class SearchTestCase(unittest.TestCase):
         self.assertItemsEqual(rightlist, json.loads(response.normal_body))
         self.assertNotIn(wronglist[0], json.loads(response.normal_body))
         self.assertEqual('application/json', response.content_type)
+
+    def test101Algorithms_AlgorithmsHandler(self):
+        """Tests if 101 algorithms are returned from database containing only 101 algorithms
+        It should fail if <index_object>.get_range() is used because it returns only 100 results"""
+        wronglist = []
+        rightlist = []
+        createTestAlgorithmList(wronglist, 1)
+        createTestAlgorithmList(rightlist, 101)
+        wronglist[0]['linkURL'] = 'wrongLinkURL'
+        for i in range(101):
+            document = search_algorithm.create_document(rightlist[i]['algorithmId'],
+                                                        rightlist[i]['algorithmSummary'],
+                                                        rightlist[i]['displayName'],
+                                                        rightlist[i]['linkURL'])
+            search.Index(name=search_algorithm._INDEX_STRING).put(document)
+        response = self.testapp.get('/')
+        self.assertEqual(200, response.status_int)
+        print response.normal_body
+        self.assertItemsEqual(rightlist, json.loads(response.normal_body))
+        self.assertNotIn(wronglist[0], json.loads(response.normal_body))
+        self.assertEqual('application/json', response.content_type)
+
 
 
 if __name__ == '__main__':
