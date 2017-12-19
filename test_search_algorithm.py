@@ -158,6 +158,31 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertEqual(200, len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
 
+    def test1queryfrom200Algorithms_AlgorithmsHandler(self):
+        """Tests if 1 algorithm with query string is returned from database containing 200 algorithms
+         by query of string 'displayName102'
+        """
+        query_string = 'displayName102'
+        upload_data_list = []
+        create_test_algorithm_list(upload_data_list, 200)
+        documents = []
+        create_test_documents_list(upload_data_list, documents, 200)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        # end of data preparation
+        number = query_string.split('displayName')[1]
+        data = {}
+        data['algorithmId'] = 'algorithmId' + number
+        data['algorithmSummary'] = 'algorithmSummary' + number
+        data['displayName'] = 'displayName' + number
+        data['linkURL'] = 'linkURL' + number
+        right_answer_list = [data]
+        # end right answer list preparation
+        response = self.testapp.get('/?query=' + query_string)
+        result = json.loads(response.normal_body)
+        self.assertEqual(1, len(result), msg='Wrong number of algorithms')
+        self.assertItemsEqual(right_answer_list, result, msg='Discrepancy in returned algorithms')
+
 
 class SearchTestCaseUnittest(unittest.TestCase):
     """ Test Case for unittests without webtest"""
@@ -205,19 +230,24 @@ class SearchTestCaseUnittest(unittest.TestCase):
          by query of string 'displayName102'
         """
         query_string = 'displayName102'
-        right_list = []
-        create_test_algorithm_list(right_list, 200)
+        upload_data_list = []
+        create_test_algorithm_list(upload_data_list, 200)
         documents = []
-        create_test_documents_list(right_list, documents, 200)
+        create_test_documents_list(upload_data_list, documents, 200)
         index = search.Index(name=search_algorithm._INDEX_STRING)
         index.put(documents)
         # end of data preparation
-        right answer_list
+        number=query_string.split('displayName')[1]
+        data={}
+        data['algorithmId'] = 'algorithmId' + number
+        data['algorithmSummary'] = 'algorithmSummary' + number
+        data['displayName'] = 'displayName' + number
+        data['linkURL'] = 'linkURL' + number
+        right_answer_list= [data]
         # end right answer list preparation
-        #TODO: not ended
         result = search_algorithm.query_algorithms(index, query_string)
         self.assertEqual(1, len(result), msg='Wrong number of algorithms')
-        self.assertItemsEqual([{}], result, msg='Discrepancy in returned algorithms')
+        self.assertItemsEqual(right_answer_list, result, msg='Discrepancy in returned algorithms')
 
 
 if __name__ == '__main__':
