@@ -60,9 +60,10 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
 
     def testMalformedQuery_AlgorithmsHandler(self):
         """
-        Tests if 400 is returned if there is no query= in uri
+        Tests if 400 is returned if there is no query= in uri while there is "?" after "/" indicating there are paramete-
+        rs to be expected
         """
-        response = self.testapp.get('/qqry=wqwqw')
+        response = self.testapp.get('/?qqry=wqwqw', expect_errors=True)
         self.assertEqual(400, response.status_int)
         self.assertIn('Malformed Data', response.normal_body)
         self.assertEqual('application/json', response.content_type)
