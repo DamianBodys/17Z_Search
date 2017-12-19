@@ -237,8 +237,8 @@ class SearchTestCaseUnittest(unittest.TestCase):
         index = search.Index(name=search_algorithm._INDEX_STRING)
         index.put(documents)
         # end of data preparation
-        number=query_string.split('displayName')[1]
-        data={}
+        number = query_string.split('displayName')[1]
+        data = {}
         data['algorithmId'] = 'algorithmId' + number
         data['algorithmSummary'] = 'algorithmSummary' + number
         data['displayName'] = 'displayName' + number
@@ -249,6 +249,31 @@ class SearchTestCaseUnittest(unittest.TestCase):
         self.assertEqual(1, len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_answer_list, result, msg='Discrepancy in returned algorithms')
 
+    def testORqueryfrom200Algorithms_query_algorithms(self):
+        """Tests if 2 algorithms with query string are returned from database containing only 200 algorithms
+         by query of string 'displayName102 OR algorithmId23'
+        """
+        query_string = 'displayName102 OR algorithmId23'
+        upload_data_list = []
+        create_test_algorithm_list(upload_data_list, 200)
+        documents = []
+        create_test_documents_list(upload_data_list, documents, 200)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        # end of data preparation
+        numbers = ['23', '102']
+        right_answer_list = []
+        for number in numbers:
+            data = {}
+            data['algorithmId'] = 'algorithmId' + number
+            data['algorithmSummary'] = 'algorithmSummary' + number
+            data['displayName'] = 'displayName' + number
+            data['linkURL'] = 'linkURL' + number
+            right_answer_list.append(data)
+        # end right answer list preparation
+        result = search_algorithm.query_algorithms(index, query_string)
+        self.assertEqual(len(right_answer_list), len(result), msg='Wrong number of algorithms')
+        self.assertItemsEqual(right_answer_list, result, msg='Discrepancy in returned algorithms')
 
 if __name__ == '__main__':
     unittest.main()
