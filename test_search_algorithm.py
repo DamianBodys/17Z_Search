@@ -58,6 +58,15 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertEqual('[]', response.normal_body)
         self.assertEqual('application/json', response.content_type)
 
+    def testMalformedQuery_AlgorithmsHandler(self):
+        """
+        Tests if 400 is returned if there is no query= in uri
+        """
+        response = self.testapp.get('/qqry=wqwqw')
+        self.assertEqual(400, response.status_int)
+        self.assertIn('Malformed Data', response.normal_body)
+        self.assertEqual('application/json', response.content_type)
+
     def testOneAlgorithm_AlgorithmsHandler(self):
         """Tests if only one algorithm is returned from database containing only one algorithm"""
         wrong_list = []
