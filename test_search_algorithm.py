@@ -331,5 +331,6 @@ class SearchTestCaseUnittest(unittest.TestCase):
         self.assertEqual(len(right_answer_list), len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_answer_list, result, msg='Discrepancy in returned algorithms')
 
+
 if __name__ == '__main__':
     unittest.main()
