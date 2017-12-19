@@ -136,8 +136,30 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
         self.assertEqual('application/json', response.content_type)
 
+    def test200queryAlgorithms_AlgorithmsHandler(self):
+        """Tests if 200 algorithms are returned from database containing only 200 algorithms by query of string
+        algorithms which will be is present in every test algorithm in field displayName == 'algorithm <id>'
+        """
+        query_string = 'algorithm'
+        right_list = []
+        create_test_algorithm_list(right_list, 200)
+        # changing the right_list to contain string query_string separated from <number> in every displayName field
+        # so that the query will return every row in database
+        for algorithm in right_list:
+            algorithm['displayName'] = query_string + ' ' + algorithm['displayName'].split('displayName')[1]
+        documents = []
+        create_test_documents_list(right_list, documents, 200)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        # End of data preparation
+        response = self.testapp.get('/?query=' + query_string)
+        result = json.loads(response.normal_body)
+        self.assertEqual(200, len(result), msg='Wrong number of algorithms')
+        self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
+
 
 class SearchTestCaseUnittest(unittest.TestCase):
+    """ Test Case for unittests without webtest"""
     def setUp(self):
         self.testbed = testbed.Testbed()
         self.testbed.activate()
@@ -173,9 +195,11 @@ class SearchTestCaseUnittest(unittest.TestCase):
         create_test_documents_list(right_list, documents, 200)
         index = search.Index(name=search_algorithm._INDEX_STRING)
         index.put(documents)
-        result = search_algorithm.query_algorithms(index,query_string)
+        result = search_algorithm.query_algorithms(index, query_string)
         self.assertEqual(200, len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
+
+
 
 if __name__ == '__main__':
     unittest.main()
