@@ -68,7 +68,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
     def tearDown(self):
         self.testbed.deactivate()
 
-    def testEmpty_AlgorithmsHandler(self):
+    def testGETEmpty_AlgorithmsHandler(self):
         """
         Tests if empty database is returned
         """
@@ -77,7 +77,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertEqual('[]', response.normal_body)
         self.assertEqual('application/json', response.content_type)
 
-    def testMalformedQuery_AlgorithmsHandler(self):
+    def testGETMalformedQuery_AlgorithmsHandler(self):
         """
         Tests if 400 is returned if there is no query= in uri while there is "?" after "/" indicating there are paramete-
         rs to be expected
@@ -87,7 +87,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertIn('Malformed Data', response.normal_body)
         self.assertEqual('application/json', response.content_type)
 
-    def testOneAlgorithm_AlgorithmsHandler(self):
+    def testGETOneAlgorithm_AlgorithmsHandler(self):
         """Tests if only one algorithm is returned from database containing only one algorithm"""
         wrong_list = []
         right_list = []
@@ -105,7 +105,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
         self.assertEqual('application/json', response.content_type)
 
-    def testTwoAlgorithms_AlgorithmsHandler(self):
+    def testGETTwoAlgorithms_AlgorithmsHandler(self):
         """Tests if only two algorithms are returned from database containing only 2 algorithms"""
         wrong_list = []
         right_list = []
@@ -124,7 +124,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
         self.assertEqual('application/json', response.content_type)
 
-    def test100Algorithms_AlgorithmsHandler(self):
+    def testGET100Algorithms_AlgorithmsHandler(self):
         """Tests if 100 algorithms are returned from database containing only 100 algorithms"""
         wrong_list = []
         right_list = []
@@ -145,7 +145,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
                          msg='The list of algorithms contains nonexistent data')
         self.assertEqual('application/json', response.content_type, msg='Wrong content type of an answer')
 
-    def test101Algorithms_AlgorithmsHandler(self):
+    def testGET101Algorithms_AlgorithmsHandler(self):
         """Tests if 101 algorithms are returned from database containing only 101 algorithms
         It should fail if <index_object>.get_range() is used because it returns only
          100 results"""
@@ -166,7 +166,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
         self.assertEqual('application/json', response.content_type)
 
-    def test200queryAlgorithms_AlgorithmsHandler(self):
+    def testGET200queryAlgorithms_AlgorithmsHandler(self):
         """Tests if 200 algorithms are returned from database containing only 200 algorithms by query of string
         algorithms which will be is present in every test algorithm in field displayName == 'algorithm <id>'
         """
@@ -187,7 +187,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertEqual(200, len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
 
-    def test1queryfrom200Algorithms_AlgorithmsHandler(self):
+    def testGET1queryfrom200Algorithms_AlgorithmsHandler(self):
         """Tests if 1 algorithm with query string is returned from database containing 200 algorithms
          by query of string 'displayName102'
         """
@@ -212,7 +212,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertEqual(1, len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_answer_list, result, msg='Discrepancy in returned algorithms')
 
-    def testORqueryfrom200Algorithms_AlgorithmsHandler(self):
+    def testGETORqueryfrom200Algorithms_AlgorithmsHandler(self):
         """Tests if 2 algorithms with query string are returned from database containing only 200 algorithms
          by query of string 'displayName102 OR algorithmId23'
         """
