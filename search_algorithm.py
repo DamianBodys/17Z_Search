@@ -142,13 +142,35 @@ class AlgorithmsHandler(webapp2.RequestHandler):
             q = parse_qs(url.query)
             if 'query' in q.keys():
                 query_string = q['query'][0]
-        algorithms_list = query_algorithms(search.Index(name=_INDEX_STRING), query_string)
-        json.dump(algorithms_list, self.response.out)
-        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
-        self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
-        self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
-        self.response.headers['Content-Type'] = 'application/json'
-        self.response.status = 200
+                algorithms_list = query_algorithms(search.Index(name=_INDEX_STRING), query_string)
+                json.dump(algorithms_list, self.response.out)
+                self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+                self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+                self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+                self.response.headers['Content-Type'] = 'application/json'
+                self.response.status = 200
+            else:
+                data = {
+                    "code": 400,
+                    "fields": "string",
+                    "message": "Malformed Data"
+                }
+                self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+                self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+                self.response.headers.add_header('Access-Control-Allow-Headers',
+                                                 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+                self.response.headers['Content-Type'] = 'application/json'
+                self.response.status = 400
+                json.dump(data, self.response.out)
+        else:
+            algorithms_list = query_algorithms(search.Index(name=_INDEX_STRING), query_string)
+            json.dump(algorithms_list, self.response.out)
+            self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+            self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+            self.response.headers.add_header('Access-Control-Allow-Headers',
+                                             'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+            self.response.headers['Content-Type'] = 'application/json'
+            self.response.status = 200
 
     def post(self):
         """Add a new Algorithm to Full Text Search"""

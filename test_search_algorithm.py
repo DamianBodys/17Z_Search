@@ -210,6 +210,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertEqual(len(right_answer_list), len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_answer_list, result, msg='Discrepancy in returned algorithms')
 
+
 class SearchTestCaseUnittest(unittest.TestCase):
     """ Test Case for unittests without webtest"""
     def setUp(self):
