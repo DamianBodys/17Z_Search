@@ -38,6 +38,7 @@ def create_test_documents_list(data_list, documents, length):
                                                     data_list[i]['linkURL'])
         documents.append(document)
 
+
 class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
     def setUp(self):
         self.testapp = webtest.TestApp(search_algorithm.application)
@@ -169,7 +170,7 @@ class SearchTestCaseUnittest(unittest.TestCase):
         self.testbed.deactivate()
 
     def test101Algorithms_query_algorithms(self):
-        """Tests if 101 algorithms are returned from database containing only 101 algorithms
+        """Tests if 101 algorithms without query string are returned from database containing only 101 algorithms
         It should fail if <index_object>.get_range() is used because it returns only 100 results"""
         right_list = []
         create_test_algorithm_list(right_list, 101)
@@ -182,7 +183,7 @@ class SearchTestCaseUnittest(unittest.TestCase):
         self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
 
     def test200queryAlgorithms_query_algorithms(self):
-        """Tests if 200 algorithms are returned from database containing only 200 algorithms by query of string
+        """Tests if 200 algorithms with query string are returned from database containing only 200 algorithms by query of string
         algorithms which will be is present in every test algorithm in field displayName == 'algorithm <id>'
         """
         query_string = 'algorithm'
@@ -199,6 +200,24 @@ class SearchTestCaseUnittest(unittest.TestCase):
         self.assertEqual(200, len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
 
+    def test1queryfrom200Algorithms_query_algorithms(self):
+        """Tests if 1 algorithm with query string is returned from database containing only 200 algorithms
+         by query of string 'displayName102'
+        """
+        query_string = 'displayName102'
+        right_list = []
+        create_test_algorithm_list(right_list, 200)
+        documents = []
+        create_test_documents_list(right_list, documents, 200)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        # end of data preparation
+        right answer_list
+        # end right answer list preparation
+        #TODO: not ended
+        result = search_algorithm.query_algorithms(index, query_string)
+        self.assertEqual(1, len(result), msg='Wrong number of algorithms')
+        self.assertItemsEqual([{}], result, msg='Discrepancy in returned algorithms')
 
 
 if __name__ == '__main__':
