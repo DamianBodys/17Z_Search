@@ -39,6 +39,25 @@ def create_test_documents_list(data_list, documents, length):
         documents.append(document)
 
 
+class SearchTestCaseErrorHandlers(unittest.TestCase):
+    def setUp(self):
+        self.testapp = webtest.TestApp(search_algorithm.application)
+        self.testbed = testbed.Testbed()
+        self.testbed.activate()
+
+    def tearDown(self):
+        self.testbed.deactivate()
+
+    def testPageNotFound404_error_handler(self):
+        """
+        Tests if 404 is returned if there is no such page/route
+        """
+        response = self.testapp.get('/notexistentpage/', expect_errors=True)
+        self.assertEqual(404, response.status_int)
+        self.assertIn('Page Not Found', response.normal_body)
+        self.assertEqual('application/json', response.content_type)
+
+
 class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
     def setUp(self):
         self.testapp = webtest.TestApp(search_algorithm.application)
@@ -63,7 +82,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         Tests if 400 is returned if there is no query= in uri while there is "?" after "/" indicating there are paramete-
         rs to be expected
         """
-        response = self.testapp.get('/?qqry=wqwqw', expect_errors=True)
+        response = self.testapp.get('/?qqry=algorithm', expect_errors=True)
         self.assertEqual(400, response.status_int)
         self.assertIn('Malformed Data', response.normal_body)
         self.assertEqual('application/json', response.content_type)

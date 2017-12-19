@@ -44,7 +44,7 @@ def query_algorithms(index_object, query_string='', sort_options_object=None):
     if query_string == '' and sort_options_object is None:
         start_id = None
         while True:
-            results = index_object.get_range(start_id, include_start_object=False)
+            results = index_object.get_range(start_id, include_start_object=False)  # returns max 100 rows
             if len(results.results) == 0:
                 # break if there are no more documents
                 break
@@ -204,6 +204,24 @@ class AlgorithmsHandler(webapp2.RequestHandler):
         self.response.status = 200
 
 
+def handle_404(request, response, exception):
+    """Handles not found error"""
+    data = {
+        "code": 404,
+        "fields": "string",
+        "message": "Page Not Found"
+    }
+    response.headers.add_header("Access-Control-Allow-Origin", "*")
+    response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+    response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, ' +
+                                'x-requested-with, Total-Count, Total-Pages, Error-Message')
+    response.headers['Content-Type'] = 'application/json'
+    response.status = 404
+    json.dump(data, response.out)
+
+
 application = webapp2.WSGIApplication(
     [('/', AlgorithmsHandler), ('/algorithms/(.+)', AlgorithmsIdHandler)],
     debug=True)
+
+application.error_handlers[404] = handle_404
