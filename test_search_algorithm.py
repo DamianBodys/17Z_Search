@@ -264,7 +264,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertEqual('lURL', test_document.field('linkURL').value)
         self.assertGreater(datetime.now(), test_document.field('date').value)
 
-    def test_AlgorithmsHandler_POSTError400(self):
+    def test_AlgorithmsHandler_POSTError400WrongContentType(self):
         data={}
         data['algorithmId'] = 'aId'
         data['algorithmSummary'] = 'aSummary'
@@ -275,6 +275,19 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertEqual(400, response.status_int, msg='Wrong answer code')
         self.assertEqual('application/json', response.content_type)
         self.assertIn('Malformed Data', response.normal_body)
+
+    def test_AlgorithmsHandler_POSTError400WrongData(self):
+        data={}
+        data['algorithmId'] = 'a' + ' ' + 'Id'
+        data['algorithmSummary'] = 'aSummary'
+        data['displayName'] = 'dName'
+        data['linkURL'] = 'lURL'
+        input_json = json.dumps(data)
+        response = self.testapp.post('/', params=input_json, content_type='application/json', expect_errors=True)
+        self.assertEqual(400, response.status_int, msg='Wrong answer code')
+        self.assertEqual('application/json', response.content_type)
+        self.assertIn('Malformed Data', response.normal_body)
+
 
 class SearchTestCaseUnittest(unittest.TestCase):
     """ Test Case for unittests without webtest"""
