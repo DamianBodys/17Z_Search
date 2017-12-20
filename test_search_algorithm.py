@@ -271,23 +271,10 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         data['displayName'] = 'dName'
         data['linkURL'] = 'lURL'
         input_json = json.dumps(data)
-        response_one = self.testapp.post('/', params=input_json, content_type='application/json')
-        self.assertEqual(200, response_one.status_int, msg='Wrong answer code')
-        response_two = self.testapp.post('/', params=input_json, content_type='application/json', expect_errors=True)
-        self.assertEqual(400, response_two.status_int, msg='Wrong answer code')
-        #TODO: self.assertEqual('application/json',response_two,)
-        # get data from search
-        index = search.Index(name=search_algorithm._INDEX_STRING)
-        test_document = index.get('aId')
-        self.assertIsNotNone(test_document, msg='The posted document doc_id is not found in search database')
-        self.assertEqual('aId', test_document.doc_id)
-        self.assertEqual('aId', test_document.field('algorithmId').value)
-        self.assertEqual('aSummary', test_document.field('algorithmSummary').value)
-        self.assertEqual('dName', test_document.field('displayName').value)
-        self.assertEqual('lURL', test_document.field('linkURL').value)
-        self.assertGreater(datetime.now(), test_document.field('date').value)
-
-
+        response = self.testapp.post('/', params=input_json, content_type='text/html', expect_errors=True)
+        self.assertEqual(400, response.status_int, msg='Wrong answer code')
+        self.assertEqual('application/json', response.content_type)
+        self.assertIn('Malformed Data', response.normal_body)
 
 class SearchTestCaseUnittest(unittest.TestCase):
     """ Test Case for unittests without webtest"""
