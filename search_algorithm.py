@@ -23,7 +23,7 @@ def is_algorithm_dict(x):
     if not isinstance(x, dict):
         return False
     else:
-        if not x.keys().count() == 4:
+        if not len(x.keys()) == 4:
             return False
         else:
             for key in ['algorithmId', 'algorithmSummary', 'displayName', 'linkURL']:
@@ -31,7 +31,12 @@ def is_algorithm_dict(x):
                     return False
                 if not isinstance(x[key], basestring):
                     return False
-            if len(x['algorithmId']) > 8:
+            if len(x['algorithmId']) == 0:
+                return False
+            if not has_no_whitespaces(x['algorithmId']):
+                return False
+            if x['algorithmId'][0] == '!':
+                # search.document.doc_id cant begin with '!'
                 return False
     return True
 
@@ -201,12 +206,27 @@ class AlgorithmsHandler(webapp2.RequestHandler):
         """Add a new Algorithm to Full Text Search"""
         if self.request.content_type == 'application/json':
             data = json.loads(self.request.body)
-            document = create_document(data['algorithmId'],
-                                       data['algorithmSummary'],
-                                       data['displayName'],
-                                       data['linkURL'])
-            search.Index(name=_INDEX_STRING).put(document)
-            self.response.status = 200
+            if is_algorithm_dict(data):
+                document = create_document(data['algorithmId'],
+                                           data['algorithmSummary'],
+                                           data['displayName'],
+                                           data['linkURL'])
+                search.Index(name=_INDEX_STRING).put(document)
+                self.response.status = 200
+            else:
+                data = {
+                    "code": 400,
+                    "fields": "string",
+                    "message": "Malformed Data"
+                }
+                self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+                self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+                self.response.headers.add_header('Access-Control-Allow-Headers',
+                                                 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+                self.response.headers['Content-Type'] = 'application/json'
+                self.response.status = 400
+                json.dump(data, self.response.out)
+
         else:
             data = {
                 "code": 400,
