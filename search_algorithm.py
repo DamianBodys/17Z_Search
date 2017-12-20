@@ -7,8 +7,33 @@ from urlparse import urlparse, parse_qs
 import webapp2
 import json
 from google.appengine.api import search
+import string
 
 _INDEX_STRING = 'algorithms'
+
+
+def has_no_whitespaces(my_string):
+    for my_char in my_string:
+        if my_char in string.whitespace:
+            return False
+    return True
+
+
+def is_algorithm_dict(x):
+    if not isinstance(x, dict):
+        return False
+    else:
+        if not x.keys().count() == 4:
+            return False
+        else:
+            for key in ['algorithmId', 'algorithmSummary', 'displayName', 'linkURL']:
+                if key not in x.keys():
+                    return False
+                if not isinstance(x[key], basestring):
+                    return False
+            if len(x['algorithmId']) > 8:
+                return False
+    return True
 
 
 def del_all(index_object):
