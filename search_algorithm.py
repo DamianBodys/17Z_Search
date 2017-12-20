@@ -20,6 +20,7 @@ def has_no_whitespaces(my_string):
 
 
 def is_algorithm_dict(x):
+    """ Checks if dictionary object contains legitimate algorithm data"""
     if not isinstance(x, dict):
         return False
     else:
@@ -34,6 +35,7 @@ def is_algorithm_dict(x):
             if len(x['algorithmId']) == 0:
                 return False
             if not has_no_whitespaces(x['algorithmId']):
+                # search.document.doc_id can not contain whitespaces in name
                 return False
             if x['algorithmId'][0] == '!':
                 # search.document.doc_id cant begin with '!'

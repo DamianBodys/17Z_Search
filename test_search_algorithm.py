@@ -299,6 +299,22 @@ class SearchTestCaseUnittest(unittest.TestCase):
     def tearDown(self):
         self.testbed.deactivate()
 
+    def test_is_algorithm_dict_legitimate(self):
+        data={}
+        data['algorithmId'] = 'aId'
+        data['algorithmSummary'] = 'aSummary'
+        data['displayName'] = 'dName'
+        data['linkURL'] = 'lURL'
+        self.assertTrue(search_algorithm.is_algorithm_dict(data), msg='Legitimate Algorithm is detected as no good')
+
+    def test_is_algorithm_dict_Error(self):
+        data = {}
+        data['algorithmId'] = 'a' + ' ' + 'Id'
+        data['algorithmSummary'] = 'aSummary'
+        data['displayName'] = 'dName'
+        data['linkURL'] = 'lURL'
+        self.assertFalse(search_algorithm.is_algorithm_dict(data), msg='Wrong Algorithm is detected as good')
+
     def test_query_algorithms_101Algorithms_(self):
         """Tests if 101 algorithms without query string are returned from database containing only 101 algorithms
         It should fail if <index_object>.get_range() is used because it returns only 100 results"""
