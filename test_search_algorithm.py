@@ -15,6 +15,7 @@ import search_algorithm
 import json
 from google.appengine.ext import testbed
 from google.appengine.api import search
+from datetime import datetime
 
 
 def create_test_algorithm_list(data_list, length):
@@ -32,10 +33,14 @@ def create_test_algorithm_list(data_list, length):
 def create_test_documents_list(data_list, documents, length):
     """ Prepare test documents"""
     for i in range(length):
-        document = search_algorithm.create_document(data_list[i]['algorithmId'],
-                                                    data_list[i]['algorithmSummary'],
-                                                    data_list[i]['displayName'],
-                                                    data_list[i]['linkURL'])
+        document = search.Document(doc_id=data_list[i]['algorithmId'],
+                                   fields=[
+                                        search.TextField(name='algorithmId', value=data_list[i]['algorithmId']),
+                                        search.HtmlField(name='algorithmSummary', value=data_list[i]['algorithmSummary']),
+                                        search.TextField(name='displayName', value=data_list[i]['displayName']),
+                                        search.TextField(name='linkURL', value=data_list[i]['linkURL']),
+                                        search.DateField(name='date', value=datetime.now())
+                                   ])
         documents.append(document)
 
 
