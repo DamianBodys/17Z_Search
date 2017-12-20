@@ -299,6 +299,12 @@ class SearchTestCaseUnittest(unittest.TestCase):
     def tearDown(self):
         self.testbed.deactivate()
 
+    def test_has_no_whitespaces(self):
+        stringOK = 'stringOK'
+        stringNOK = stringOK + '\n'
+        self.assertTrue(search_algorithm.has_no_whitespaces(stringOK), msg='There ware whitespaces detected in legitimate string')
+        self.assertFalse(search_algorithm.has_no_whitespaces(stringNOK), msg='The whitespace was not detected in string with whitespaces')
+
     def test_is_algorithm_dict_legitimate(self):
         data={}
         data['algorithmId'] = 'aId'
