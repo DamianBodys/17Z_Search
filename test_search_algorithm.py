@@ -288,6 +288,12 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertEqual('application/json', response.content_type)
         self.assertIn('Malformed Data', response.normal_body)
 
+    def test_AlgorithmsHandler_POSTError400NoBody(self):
+        response = self.testapp.post('/', content_type='application/json', expect_errors=True)
+        self.assertEqual(400, response.status_int, msg='Wrong answer code')
+        self.assertEqual('application/json', response.content_type)
+        self.assertIn('Malformed Data', response.normal_body)
+
 
 class SearchTestCaseUnittest(unittest.TestCase):
     """ Test Case for unittests without webtest"""
