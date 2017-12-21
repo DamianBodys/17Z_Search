@@ -422,6 +422,20 @@ class SearchTestCaseUnittest(unittest.TestCase):
         self.assertEqual(link_url, test_document.field('linkURL').value)
         self.assertGreater(datetime.now(), test_document.field('date').value)
 
+    def test_del_all_from101algorithms(self):
+        """Tests if all algorithms are deleted from database containing 101 algorithms
+        101 is significant because <search index>.get_range gets only 100 records"""
+        my_list = []
+        create_test_algorithm_list(my_list, 101)
+        documents = []
+        create_test_documents_list(my_list, documents, 101)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        result = index.get_range()
+        self.assertLess(0, len(result.results), msg='There ware no algorithms present before del_all')
+        search_algorithm.del_all(index)
+        result = index.get_range()
+        self.assertEqual(0, len(result.results), msg='There ware algorithms present after del_all')
 
 if __name__ == '__main__':
     unittest.main()
