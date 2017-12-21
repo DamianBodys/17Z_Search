@@ -32,8 +32,42 @@ paths:
           description: Details of the algorithm
           schema:
             $ref: '#/definitions/Algorithms'
+        '400':
+          description: Malformed data
+          schema:
+            $ref: '#/definitions/Error'
         '404':
           description: The given algorithmID was not found in collection
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      tags:
+        - Algorithms
+      summary: Delete single Algorithm
+      description: Deletes algorithm data by algorithmId
+      operationId: AlgorithmsIdHandler.delete
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: algorithmID
+          in: path
+          description: ID of an algorithm
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Deleted or not present
+          schema:
+            $ref: '#/definitions/Algorithms'
+        '400':
+          description: Malformed data
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Algorithm not deleted
+          schema:
+            $ref: '#/definitions/Error'
   /:
     get:
       tags:
@@ -63,6 +97,10 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Algorithms'
+        '400':
+          description: Malformed data
+          schema:
+            $ref: '#/definitions/Error'
     post:
       tags:
         - Algorithms
@@ -89,10 +127,6 @@ paths:
           description: No authentication. Need to login.
         '403':
           description: Not authorized to post new algorithms
-        '409':
-          description: AlgorithmID already exists.
-          schema:
-            $ref: '#/definitions/Error'
     delete:
       tags:
         - Algorithms
