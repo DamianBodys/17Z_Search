@@ -294,6 +294,22 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertEqual('application/json', response.content_type)
         self.assertIn('Malformed Data', response.normal_body)
 
+    def test_AlgorithmsHandler_DELETE(self):
+        """Tests if all algorithms are deleted from database containing 101 algorithms
+        101 is significant because <search index>.get_range gets only 100 records"""
+        my_list = []
+        create_test_algorithm_list(my_list, 101)
+        documents = []
+        create_test_documents_list(my_list, documents, 101)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        result = index.get_range(ids_only=True)
+        self.assertLess(0, len(result.results), msg='There ware no algorithms present before DELETE')
+        response = self.testapp.delete('/')
+        self.assertEqual(200, response.status_int, msg='Wrong response code')
+        result = index.get_range(ids_only=True)
+        self.assertEqual(0, len(result.results), msg='There ware algorithms present after DELETE')
+
 
 class SearchTestCaseUnittest(unittest.TestCase):
     """ Test Case for unittests without webtest"""
@@ -431,10 +447,10 @@ class SearchTestCaseUnittest(unittest.TestCase):
         create_test_documents_list(my_list, documents, 101)
         index = search.Index(name=search_algorithm._INDEX_STRING)
         index.put(documents)
-        result = index.get_range()
+        result = index.get_range(ids_only=True)
         self.assertLess(0, len(result.results), msg='There ware no algorithms present before del_all')
         search_algorithm.del_all(index)
-        result = index.get_range()
+        result = index.get_range(ids_only=True)
         self.assertEqual(0, len(result.results), msg='There ware algorithms present after del_all')
 
 if __name__ == '__main__':
