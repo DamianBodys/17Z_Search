@@ -154,22 +154,36 @@ def create_document(algorithm_id, algorithm_summary, display_name, link_url):
 
 class AlgorithmsIdHandler(webapp2.RequestHandler):
     def get(self, algorithm_id):
-        algorithm = get_algorithm(search.Index(name=_INDEX_STRING), algorithm_id)
-        if algorithm != 1:
-            json.dump(algorithm, self.response.out)
-            self.response.status = 200
+        if is_algorithm_id(algorithm_id):
+            algorithm = get_algorithm(search.Index(name=_INDEX_STRING), algorithm_id)
+            if algorithm != 1:
+                json.dump(algorithm, self.response.out)
+                self.response.status = 200
+            else:
+                data = {
+                    "code": 404,
+                    "fields": "string",
+                    "message": "Algorithm Not Found"
+                }
+                self.response.status = 404
+                json.dump(data, self.response.out)
+            self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+            self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+            self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+            self.response.headers['Content-Type'] = 'application/json'
         else:
             data = {
-                "code": 404,
+                "code": 400,
                 "fields": "string",
-                "message": "Algorithm Not Found"
+                "message": "Malformed Data"
             }
-            self.response.status = 404
+            self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+            self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+            self.response.headers.add_header('Access-Control-Allow-Headers',
+                                             'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+            self.response.headers['Content-Type'] = 'application/json'
+            self.response.status = 400
             json.dump(data, self.response.out)
-        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
-        self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
-        self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
-        self.response.headers['Content-Type'] = 'application/json'
 
 
 class AlgorithmsHandler(webapp2.RequestHandler):

@@ -354,6 +354,15 @@ class SearchTestCaseAlgorithmsIdHandler(unittest.TestCase):
         self.assertEqual('application/json', response.content_type)
         self.assertIn('Algorithm Not Found', response.normal_body)
 
+    def test_AlgorithmsIdHandler_GET_MalformedRequest(self):
+        """Tests if nothing is found in an empty database while searching for bad algorithmId
+         'xyz 1' (whitespace in name)"""
+        searchedId='xyz' + ' ' + '1'
+        response = self.testapp.get('/algorithms/' + searchedId, expect_errors=True)
+        self.assertEqual(400, response.status_int, msg='Wrong answer code')
+        self.assertEqual('application/json', response.content_type)
+        self.assertIn('Malformed Data', response.normal_body)
+
     def test_AlgorithmsIdHandler_GET_NotFound(self):
         """Tests if nothing is found in an 101 algorithms long database
          while searching for nonexistent algorithmId xyz1"""
