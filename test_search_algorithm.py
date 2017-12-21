@@ -311,6 +311,25 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertEqual(0, len(result.results), msg='There ware algorithms present after DELETE')
 
 
+class SearchTestCaseAlgorithmsIdHandler(unittest.TestCase):
+    def setUp(self):
+        self.testapp = webtest.TestApp(search_algorithm.application)
+        self.testbed = testbed.Testbed()
+        self.testbed.activate()
+        self.testbed.init_search_stub()
+
+    def tearDown(self):
+        self.testbed.deactivate()
+
+    def test_AlgorithmsIdHandler_GET_Empty(self):
+        """Tests if nothing is found in an empty database while searching for algorithmId xyz1"""
+        searchedId='xyz1'
+        response = self.testapp.get('/algorithms/' + searchedId, expect_errors=True)
+        self.assertEqual(404, response.status_int, msg='Non existent Algorithm was found in empty database')
+        self.assertEqual('application/json', response.content_type)
+        self.assertIn('Algorithm Not Found', response.normal_body)
+
+
 class SearchTestCaseUnittest(unittest.TestCase):
     """ Test Case for unittests without webtest"""
     def setUp(self):
@@ -342,6 +361,53 @@ class SearchTestCaseUnittest(unittest.TestCase):
         data['displayName'] = 'dName'
         data['linkURL'] = 'lURL'
         self.assertFalse(search_algorithm.is_algorithm_dict(data), msg='Wrong Algorithm is detected as good')
+
+    def test_get_algorithm_Found(self):
+        """Tests if algorithm is returned from an 102 algorithms database while searching for
+        existent algorithmId xyz1"""
+        searched_id = 'xyz1'
+        searched_algorithm = {}
+        searched_algorithm['algorithmId'] = searched_id
+        searched_algorithm['algorithmSummary'] = 'algorithmSummary' + searched_id
+        searched_algorithm['displayName'] = 'displayName' + searched_id
+        searched_algorithm['linkURL'] = 'linkURL' + searched_id
+        right_list = []
+        create_test_algorithm_list(right_list, 101)
+        right_list.append(searched_algorithm)
+        documents = []
+        create_test_documents_list(right_list, documents, 102)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        # end of preparing data
+        result = index.get_range(ids_only=True)
+        self.assertLess(0, len(result.results), msg='The database is empty')
+        algorithm = search_algorithm.get_algorithm(index, searched_id)
+        self.assertDictEqual(searched_algorithm, algorithm, msg='Algorithm was not found in 102 algorithms database')
+
+    def test_get_algorithm_NotFound(self):
+        """Tests if '1' is returned from an 101 algorithms database while searching for nonexistent algorithmId xyz1"""
+        searched_id = 'xyz1'
+        right_list = []
+        create_test_algorithm_list(right_list, 101)
+        documents = []
+        create_test_documents_list(right_list, documents, 101)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        # end of preparing data
+        result = index.get_range(ids_only=True)
+        self.assertLess(0, len(result.results), msg='The database is empty')
+        algorithm = search_algorithm.get_algorithm(index, searched_id)
+        self.assertEqual(1, algorithm, msg='Nonexistent Algorithm was found in 101 algorithms database')
+
+    def test_get_algorithm_Empty(self):
+        """Tests if returns 1 from search on empty database"""
+        searched_id = 'xyz1'
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        result = index.get_range(ids_only=True)
+        self.assertEqual(0, len(result.results), msg='The database is not empty')
+        algorithm = search_algorithm.get_algorithm(index, searched_id)
+        self.assertEqual(1, algorithm, msg='Non existent Algorithm was found in empty database')
+
 
     def test_query_algorithms_101Algorithms_(self):
         """Tests if 101 algorithms without query string are returned from database containing only 101 algorithms

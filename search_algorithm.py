@@ -19,6 +19,21 @@ def has_no_whitespaces(my_string):
     return True
 
 
+def is_algorithm_id(x):
+    """Checks if its legitimate algorithmId aka <search document>.doc_id"""
+    if not isinstance(x, basestring):
+        return False
+    if len(x) == 0:
+        return False
+    if not has_no_whitespaces(x):
+        # search.document.doc_id can not contain whitespaces in name
+        return False
+    if x[0] == '!':
+        # search.document.doc_id cant begin with '!'
+        return False
+    return True
+
+
 def is_algorithm_dict(x):
     """ Checks if dictionary object contains legitimate algorithm data"""
     if not isinstance(x, dict):
@@ -32,13 +47,7 @@ def is_algorithm_dict(x):
                     return False
                 if not isinstance(x[key], basestring):
                     return False
-            if len(x['algorithmId']) == 0:
-                return False
-            if not has_no_whitespaces(x['algorithmId']):
-                # search.document.doc_id can not contain whitespaces in name
-                return False
-            if x['algorithmId'][0] == '!':
-                # search.document.doc_id cant begin with '!'
+            if not is_algorithm_id(x['algorithmId']):
                 return False
     return True
 
@@ -151,11 +160,11 @@ class AlgorithmsIdHandler(webapp2.RequestHandler):
             self.response.status = 200
         else:
             data = {
-                "code": 401,
+                "code": 404,
                 "fields": "string",
-                "message": "Not Found"
+                "message": "Algorithm Not Found"
             }
-            self.response.status = 401
+            self.response.status = 404
             json.dump(data, self.response.out)
         self.response.headers.add_header("Access-Control-Allow-Origin", "*")
         self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
