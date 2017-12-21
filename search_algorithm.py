@@ -134,6 +134,24 @@ def get_algorithm(index_object, algorithm_id):
     return algorithm_index_dict
 
 
+def del_algorithm(index_object, algorithm_id):
+    """
+    Deletes an algorithm
+    :param index_object:
+    :param algorithm_id
+    :rtype : int
+    """
+    found_before = index_object.get(algorithm_id)
+    if found_before is None:
+        return 2
+    else:
+        index_object.delete(algorithm_id)
+    found_after = index_object.get(algorithm_id)
+    if found_after is not None:
+        return 1
+    return 0
+
+
 def create_document(algorithm_id, algorithm_summary, display_name, link_url):
     """creates a search.Document.
     :param algorithm_id:
@@ -166,6 +184,38 @@ class AlgorithmsIdHandler(webapp2.RequestHandler):
                     "message": "Algorithm Not Found"
                 }
                 self.response.status = 404
+                json.dump(data, self.response.out)
+            self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+            self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+            self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+            self.response.headers['Content-Type'] = 'application/json'
+        else:
+            data = {
+                "code": 400,
+                "fields": "string",
+                "message": "Malformed Data"
+            }
+            self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+            self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+            self.response.headers.add_header('Access-Control-Allow-Headers',
+                                             'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+            self.response.headers['Content-Type'] = 'application/json'
+            self.response.status = 400
+            json.dump(data, self.response.out)
+
+    def delete(self, algorithm_id):
+        if is_algorithm_id(algorithm_id):
+            result = del_algorithm(search.Index(name=_INDEX_STRING), algorithm_id)
+            if result != 1:
+                # delete is successful even if the algorithm_id was not there
+                self.response.status = 200
+            else:
+                data = {
+                    "code": 500,
+                    "fields": "string",
+                    "message": "Algorithm Not Deleted"
+                }
+                self.response.status = 500
                 json.dump(data, self.response.out)
             self.response.headers.add_header("Access-Control-Allow-Origin", "*")
             self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')

@@ -381,6 +381,47 @@ class SearchTestCaseAlgorithmsIdHandler(unittest.TestCase):
         self.assertEqual('application/json', response.content_type)
         self.assertIn('Algorithm Not Found', response.normal_body)
 
+    def test_AlgorithmsIdHandler_DELETE_Found(self):
+        """Tests if algorithm is deleted from an 101 algorithms database while searching for
+        existent algorithmId 'algorithmId63' and if response is 200"""
+        searched_id = 'algorithmId63'
+        right_list = []
+        create_test_algorithm_list(right_list, 101)
+        documents = []
+        create_test_documents_list(right_list, documents, 101)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        # end of preparing data
+        self.assertIsNotNone(index.get(searched_id), msg='Check if Algorithm is there before deletion')
+        response = self.testapp.delete('/algorithms/' + searched_id)
+        self.assertEqual(200, response.status_int, msg='Wrong status code')
+        self.assertIsNone(index.get(searched_id), msg='Algorithm is still there after "successful" deletion')
+
+    def test_AlgorithmsIdHandler_DELETE_NotFound(self):
+        """Tests if returns 200 while deleting nonexistent algorithmId 'xyz1'"""
+        searched_id = 'xyz1'
+        right_list = []
+        create_test_algorithm_list(right_list, 101)
+        documents = []
+        create_test_documents_list(right_list, documents, 101)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        # end of preparing data
+        self.assertIsNone(index.get(searched_id), msg='Algorithm is there but should not be')
+        response = self.testapp.delete('/algorithms/' + searched_id)
+        self.assertEqual(200, response.status_int, msg='Wrong return code')
+        self.assertIsNone(index.get(searched_id), msg='Algorithm is still there')
+
+    def test_AlgorithmsIdHandler_DELETE_MalformedRequest(self):
+        """Tests proper response status 400 while deleting bad algorithmId
+         'xyz 1' (whitespace in name)"""
+        searchedId='xyz' + ' ' + '1'
+        response = self.testapp.delete('/algorithms/' + searchedId, expect_errors=True)
+        self.assertEqual(400, response.status_int, msg='Wrong answer code')
+        self.assertEqual('application/json', response.content_type)
+        self.assertIn('Malformed Data', response.normal_body)
+
+
 class SearchTestCaseUnittest(unittest.TestCase):
     """ Test Case for unittests without webtest"""
     def setUp(self):
@@ -412,6 +453,38 @@ class SearchTestCaseUnittest(unittest.TestCase):
         data['displayName'] = 'dName'
         data['linkURL'] = 'lURL'
         self.assertFalse(search_algorithm.is_algorithm_dict(data), msg='Wrong Algorithm is detected as good')
+
+    def test_del_algorithm_Found(self):
+        """Tests if algorithm is deleted from an 101 algorithms database while searching for
+        existent algorithmId 'algorithmId63' and if function returns '0'"""
+        searched_id = 'algorithmId63'
+        right_list = []
+        create_test_algorithm_list(right_list, 101)
+        documents = []
+        create_test_documents_list(right_list, documents, 101)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        # end of preparing data
+        result = search_algorithm.del_algorithm(index, searched_id)
+        self.assertEqual(0, result, msg='Algorithm was not deleted properly')
+        self.assertNotEqual(1, result, msg='Algorithm was there but was not deleted properly')
+        self.assertNotEqual(2, result, msg='Algorithm was not there before delete')
+        self.assertIsNone(index.get(searched_id), msg='Algorithm is still there after "successful" deletion')
+
+    def test_del_algorithm_NotFound(self):
+        """Tests if function returns '2' while deletingnonexistent algorithmId 'xyz1'"""
+        searched_id = 'xyz1'
+        right_list = []
+        create_test_algorithm_list(right_list, 101)
+        documents = []
+        create_test_documents_list(right_list, documents, 101)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        # end of preparing data
+        self.assertIsNone(index.get(searched_id), msg='Algorithm is there but should not be')
+        result = search_algorithm.del_algorithm(index, searched_id)
+        self.assertEqual(2, result, msg='Wrong return code')
+        self.assertIsNone(index.get(searched_id), msg='Algorithm is still there')
 
     def test_get_algorithm_Found(self):
         """Tests if algorithm is returned from an 102 algorithms database while searching for
