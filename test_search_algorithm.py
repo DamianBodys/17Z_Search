@@ -321,6 +321,31 @@ class SearchTestCaseAlgorithmsIdHandler(unittest.TestCase):
     def tearDown(self):
         self.testbed.deactivate()
 
+    def test_AlgorithmsIdHandler_GET_Found(self):
+        """Tests if algorithm is found in 102 algorithms long database while searching for existed algorithmId xyz1"""
+        searched_id = 'xyz1'
+        searched_algorithm = {}
+        searched_algorithm['algorithmId'] = searched_id
+        searched_algorithm['algorithmSummary'] = 'algorithmSummary' + searched_id
+        searched_algorithm['displayName'] = 'displayName' + searched_id
+        searched_algorithm['linkURL'] = 'linkURL' + searched_id
+        right_list = []
+        create_test_algorithm_list(right_list, 101)
+        right_list.append(searched_algorithm)
+        documents = []
+        create_test_documents_list(right_list, documents, 102)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        # end of preparing data
+        result = index.get_range(ids_only=True)
+        self.assertLess(0, len(result.results), msg='The database is empty')
+        response = self.testapp.get('/algorithms/' + searched_id)
+        self.assertEqual(200, response.status_int, msg="Existent Algorithm wasn't found in empty database")
+        self.assertEqual('application/json', response.content_type)
+        self.assertNotIn('Algorithm Not Found', response.normal_body)
+        self.assertEqual(4, len(json.loads(response.normal_body)), msg='There returned algorithm has more keys then 4')
+        self.assertDictEqual(searched_algorithm, json.loads(response.normal_body), msg='Returned data was not searched algorithm')
+
     def test_AlgorithmsIdHandler_GET_Empty(self):
         """Tests if nothing is found in an empty database while searching for algorithmId xyz1"""
         searchedId='xyz1'
@@ -329,6 +354,23 @@ class SearchTestCaseAlgorithmsIdHandler(unittest.TestCase):
         self.assertEqual('application/json', response.content_type)
         self.assertIn('Algorithm Not Found', response.normal_body)
 
+    def test_AlgorithmsIdHandler_GET_NotFound(self):
+        """Tests if nothing is found in an 101 algorithms long database
+         while searching for nonexistent algorithmId xyz1"""
+        searchedId='xyz1'
+        right_list = []
+        create_test_algorithm_list(right_list, 101)
+        documents = []
+        create_test_documents_list(right_list, documents, 101)
+        index = search.Index(name=search_algorithm._INDEX_STRING)
+        index.put(documents)
+        # end of preparing data
+        result = index.get_range(ids_only=True)
+        self.assertLess(0, len(result.results), msg='The database is empty')
+        response = self.testapp.get('/algorithms/' + searchedId, expect_errors=True)
+        self.assertEqual(404, response.status_int, msg='Non existent Algorithm was found in empty database')
+        self.assertEqual('application/json', response.content_type)
+        self.assertIn('Algorithm Not Found', response.normal_body)
 
 class SearchTestCaseUnittest(unittest.TestCase):
     """ Test Case for unittests without webtest"""
