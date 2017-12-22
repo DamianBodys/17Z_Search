@@ -79,8 +79,10 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         """
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int)
-        self.assertEqual('[]', response.normal_body)
+        self.assertIsNotNone(response.charset)
+        self.assertEqual('[]', response.normal_body.decode(encoding=response.charset))
         self.assertEqual('application/json', response.content_type)
+
 
     def test_AlgorithmsHandler_GETMalformedQuery(self):
         """
@@ -89,7 +91,8 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         """
         response = self.testapp.get('/?qqry=algorithm', expect_errors=True)
         self.assertEqual(400, response.status_int)
-        self.assertIn('Malformed Data', response.normal_body)
+        self.assertIsNotNone(response.charset)
+        self.assertIn('Malformed Data', response.normal_body.decode(encoding=response.charset))
         self.assertEqual('application/json', response.content_type)
 
     def test_AlgorithmsHandler_GETOneAlgorithm(self):
@@ -106,8 +109,9 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         search.Index(name=search_algorithm._INDEX_STRING).put(document)
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int)
-        self.assertListEqual(right_list, json.loads(response.normal_body))
-        self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
+        self.assertIsNotNone(response.charset)
+        self.assertListEqual(right_list, json.loads(response.normal_body.decode(encoding=response.charset)))
+        self.assertNotIn(wrong_list[0], json.loads(response.normal_body.decode(encoding=response.charset)))
         self.assertEqual('application/json', response.content_type)
 
     def test_AlgorithmsHandler_GETTwoAlgorithms(self):
@@ -125,8 +129,9 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
             search.Index(name=search_algorithm._INDEX_STRING).put(document)
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int)
-        self.assertItemsEqual(right_list, json.loads(response.normal_body))
-        self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
+        self.assertIsNotNone(response.charset)
+        self.assertItemsEqual(right_list, json.loads(response.normal_body.decode(encoding=response.charset)))
+        self.assertNotIn(wrong_list[0], json.loads(response.normal_body.decode(encoding=response.charset)))
         self.assertEqual('application/json', response.content_type)
 
     def test_AlgorithmsHandler_GET100Algorithms(self):
@@ -144,9 +149,10 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
             search.Index(name=search_algorithm._INDEX_STRING).put(document)
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int, msg='The response was other then 200 OK')
-        self.assertItemsEqual(right_list, json.loads(response.normal_body),
+        self.assertIsNotNone(response.charset)
+        self.assertItemsEqual(right_list, json.loads(response.normal_body.decode(encoding=response.charset)),
                               msg='The list of algorithms is not the same as in database')
-        self.assertNotIn(wrong_list[0], json.loads(response.normal_body), 
+        self.assertNotIn(wrong_list[0], json.loads(response.normal_body.decode(encoding=response.charset)),
                          msg='The list of algorithms contains nonexistent data')
         self.assertEqual('application/json', response.content_type, msg='Wrong content type of an answer')
 
@@ -167,8 +173,9 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
             search.Index(name=search_algorithm._INDEX_STRING).put(document)
         response = self.testapp.get('/')
         self.assertEqual(200, response.status_int)
-        self.assertItemsEqual(right_list, json.loads(response.normal_body))
-        self.assertNotIn(wrong_list[0], json.loads(response.normal_body))
+        self.assertIsNotNone(response.charset)
+        self.assertItemsEqual(right_list, json.loads(response.normal_body.decode(encoding=response.charset)))
+        self.assertNotIn(wrong_list[0], json.loads(response.normal_body.decode(encoding=response.charset)))
         self.assertEqual('application/json', response.content_type)
 
     def test_AlgorithmsHandler_GET200queryAlgorithms(self):
@@ -188,7 +195,8 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         index.put(documents)
         # End of data preparation
         response = self.testapp.get('/?query=' + query_string)
-        result = json.loads(response.normal_body)
+        self.assertIsNotNone(response.charset)
+        result = json.loads(response.normal_body.decode(encoding=response.charset))
         self.assertEqual(200, len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_list, result, msg='Discrepancy in returned algorithms')
 
@@ -213,7 +221,8 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         right_answer_list = [data]
         # end right answer list preparation
         response = self.testapp.get('/?query=' + query_string)
-        result = json.loads(response.normal_body)
+        self.assertIsNotNone(response.charset)
+        result = json.loads(response.normal_body.decode(encoding=response.charset))
         self.assertEqual(1, len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_answer_list, result, msg='Discrepancy in returned algorithms')
 
@@ -240,7 +249,8 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
             right_answer_list.append(data)
         # end right answer list preparation
         response = self.testapp.get('/?query=' + query_string)
-        result = json.loads(response.normal_body)
+        self.assertIsNotNone(response.charset)
+        result = json.loads(response.normal_body.decode(encoding=response.charset))
         self.assertEqual(len(right_answer_list), len(result), msg='Wrong number of algorithms')
         self.assertItemsEqual(right_answer_list, result, msg='Discrepancy in returned algorithms')
 
@@ -274,7 +284,8 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         response = self.testapp.post('/', params=input_json, content_type='text/html', expect_errors=True)
         self.assertEqual(400, response.status_int, msg='Wrong answer code')
         self.assertEqual('application/json', response.content_type)
-        self.assertIn('Malformed Data', response.normal_body)
+        self.assertIsNotNone(response.charset)
+        self.assertIn('Malformed Data', response.normal_body.decode(encoding=response.charset))
 
     def test_AlgorithmsHandler_POSTError400WrongData(self):
         data={}
@@ -286,13 +297,15 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         response = self.testapp.post('/', params=input_json, content_type='application/json', expect_errors=True)
         self.assertEqual(400, response.status_int, msg='Wrong answer code')
         self.assertEqual('application/json', response.content_type)
-        self.assertIn('Malformed Data', response.normal_body)
+        self.assertIsNotNone(response.charset)
+        self.assertIn('Malformed Data', response.normal_body.decode(encoding=response.charset))
 
     def test_AlgorithmsHandler_POSTError400NoBody(self):
         response = self.testapp.post('/', content_type='application/json', expect_errors=True)
         self.assertEqual(400, response.status_int, msg='Wrong answer code')
         self.assertEqual('application/json', response.content_type)
-        self.assertIn('Malformed Data', response.normal_body)
+        self.assertIsNotNone(response.charset)
+        self.assertIn('Malformed Data', response.normal_body.decode(encoding=response.charset))
 
     def test_AlgorithmsHandler_DELETE(self):
         """Tests if all algorithms are deleted from database containing 101 algorithms
@@ -342,9 +355,9 @@ class SearchTestCaseAlgorithmsIdHandler(unittest.TestCase):
         response = self.testapp.get('/algorithms/' + searched_id)
         self.assertEqual(200, response.status_int, msg="Existent Algorithm wasn't found in empty database")
         self.assertEqual('application/json', response.content_type)
-        self.assertNotIn('Algorithm Not Found', response.normal_body)
-        self.assertEqual(4, len(json.loads(response.normal_body)), msg='There returned algorithm has more keys then 4')
-        self.assertDictEqual(searched_algorithm, json.loads(response.normal_body), msg='Returned data was not searched algorithm')
+        self.assertNotIn('Algorithm Not Found', response.normal_body.decode(encoding='UTF-8'))
+        self.assertEqual(4, len(json.loads(response.normal_body.decode(encoding='UTF-8'))), msg='There returned algorithm has more keys then 4')
+        self.assertDictEqual(searched_algorithm, json.loads(response.normal_body.decode(encoding='UTF-8')), msg='Returned data was not searched algorithm')
 
     def test_AlgorithmsIdHandler_GET_Empty(self):
         """Tests if nothing is found in an empty database while searching for algorithmId xyz1"""
@@ -352,7 +365,7 @@ class SearchTestCaseAlgorithmsIdHandler(unittest.TestCase):
         response = self.testapp.get('/algorithms/' + searchedId, expect_errors=True)
         self.assertEqual(404, response.status_int, msg='Non existent Algorithm was found in empty database')
         self.assertEqual('application/json', response.content_type)
-        self.assertIn('Algorithm Not Found', response.normal_body)
+        self.assertIn('Algorithm Not Found', response.normal_body.decode(encoding='UTF-8'))
 
     def test_AlgorithmsIdHandler_GET_MalformedRequest(self):
         """Tests if nothing is found in an empty database while searching for bad algorithmId
@@ -361,7 +374,7 @@ class SearchTestCaseAlgorithmsIdHandler(unittest.TestCase):
         response = self.testapp.get('/algorithms/' + searchedId, expect_errors=True)
         self.assertEqual(400, response.status_int, msg='Wrong answer code')
         self.assertEqual('application/json', response.content_type)
-        self.assertIn('Malformed Data', response.normal_body)
+        self.assertIn('Malformed Data', response.normal_body.decode(encoding='UTF-8'))
 
     def test_AlgorithmsIdHandler_GET_NotFound(self):
         """Tests if nothing is found in an 101 algorithms long database
@@ -379,7 +392,7 @@ class SearchTestCaseAlgorithmsIdHandler(unittest.TestCase):
         response = self.testapp.get('/algorithms/' + searchedId, expect_errors=True)
         self.assertEqual(404, response.status_int, msg='Non existent Algorithm was found in empty database')
         self.assertEqual('application/json', response.content_type)
-        self.assertIn('Algorithm Not Found', response.normal_body)
+        self.assertIn('Algorithm Not Found', response.normal_body.decode(encoding='UTF-8'))
 
     def test_AlgorithmsIdHandler_DELETE_Found(self):
         """Tests if algorithm is deleted from an 101 algorithms database while searching for
@@ -419,7 +432,7 @@ class SearchTestCaseAlgorithmsIdHandler(unittest.TestCase):
         response = self.testapp.delete('/algorithms/' + searchedId, expect_errors=True)
         self.assertEqual(400, response.status_int, msg='Wrong answer code')
         self.assertEqual('application/json', response.content_type)
-        self.assertIn('Malformed Data', response.normal_body)
+        self.assertIn('Malformed Data', response.normal_body.decode(encoding='UTF-8'))
 
 
 class SearchTestCaseUnittest(unittest.TestCase):

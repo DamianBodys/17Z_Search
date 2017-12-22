@@ -231,7 +231,7 @@ class AlgorithmsIdHandler(webapp2.RequestHandler):
             self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
             self.response.headers.add_header('Access-Control-Allow-Headers',
                                              'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
-            self.response.headers['Content-Type'] = 'application/json'
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
             self.response.status = 400
             json.dump(data, self.response.out)
 
@@ -252,7 +252,7 @@ class AlgorithmsHandler(webapp2.RequestHandler):
                 self.response.headers.add_header("Access-Control-Allow-Origin", "*")
                 self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
                 self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
-                self.response.headers['Content-Type'] = 'application/json'
+                self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
                 self.response.status = 200
             else:
                 data = {
@@ -264,7 +264,7 @@ class AlgorithmsHandler(webapp2.RequestHandler):
                 self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
                 self.response.headers.add_header('Access-Control-Allow-Headers',
                                                  'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
-                self.response.headers['Content-Type'] = 'application/json'
+                self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
                 self.response.status = 400
                 json.dump(data, self.response.out)
         else:
@@ -274,7 +274,7 @@ class AlgorithmsHandler(webapp2.RequestHandler):
             self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
             self.response.headers.add_header('Access-Control-Allow-Headers',
                                              'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
-            self.response.headers['Content-Type'] = 'application/json'
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
             self.response.status = 200
 
     def post(self):
@@ -292,7 +292,7 @@ class AlgorithmsHandler(webapp2.RequestHandler):
                 self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
                 self.response.headers.add_header('Access-Control-Allow-Headers',
                                                  'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
-                self.response.headers['Content-Type'] = 'application/json'
+                self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
                 self.response.status = 400
                 json.dump(data, self.response.out)
 
@@ -313,7 +313,7 @@ class AlgorithmsHandler(webapp2.RequestHandler):
                 self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
                 self.response.headers.add_header('Access-Control-Allow-Headers',
                                                  'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
-                self.response.headers['Content-Type'] = 'application/json'
+                self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
                 self.response.status = 400
                 json.dump(data, self.response.out)
 
@@ -326,7 +326,7 @@ class AlgorithmsHandler(webapp2.RequestHandler):
             self.response.headers.add_header("Access-Control-Allow-Origin", "*")
             self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
             self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
-            self.response.headers['Content-Type'] = 'application/json'
+            self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
             self.response.status = 400
             json.dump(data, self.response.out)
 
@@ -350,7 +350,7 @@ def handle_404(request, response, exception):
     response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
     response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, ' +
                                 'x-requested-with, Total-Count, Total-Pages, Error-Message')
-    response.headers['Content-Type'] = 'application/json'
+    response.headers['Content-Type'] = 'application/json; charset=utf-8'
     response.status = 404
     json.dump(data, response.out)
 
