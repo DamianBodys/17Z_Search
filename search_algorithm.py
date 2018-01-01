@@ -292,7 +292,7 @@ class AlgorithmsHandler(webapp2.RequestHandler):
 
     def post(self):
         """Add a new Algorithm to Full Text Search"""
-        if self.request.content_type.split(";")[0] == 'application/json':
+        if self.request.content_type == 'application/json':
             try:
                 data = json.loads(self.request.body)
             except:
