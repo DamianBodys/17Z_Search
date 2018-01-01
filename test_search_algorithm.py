@@ -261,7 +261,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         data['displayName'] = 'dName'
         data['linkURL'] = 'lURL'
         input_json = json.dumps(data)
-        response = self.testapp.post('/', params=input_json, content_type='application/json')
+        response = self.testapp.post('/', params=input_json, content_type='application/json; charset=utf-8')
         self.assertEqual(200, response.status_int, msg='Wrong answer code')
         # get data from search
         index = search.Index(name=search_algorithm._INDEX_STRING)
@@ -281,7 +281,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         data['displayName'] = 'dName'
         data['linkURL'] = 'lURL'
         input_json = json.dumps(data)
-        response = self.testapp.post('/', params=input_json, content_type='text/html', expect_errors=True)
+        response = self.testapp.post('/', params=input_json, content_type='text/html; charset=utf-8', expect_errors=True)
         self.assertEqual(400, response.status_int, msg='Wrong answer code')
         self.assertEqual('application/json', response.content_type)
         self.assertIsNotNone(response.charset)
@@ -294,14 +294,14 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         data['displayName'] = 'dName'
         data['linkURL'] = 'lURL'
         input_json = json.dumps(data)
-        response = self.testapp.post('/', params=input_json, content_type='application/json', expect_errors=True)
+        response = self.testapp.post('/', params=input_json, content_type='application/json; charset=utf-8', expect_errors=True)
         self.assertEqual(400, response.status_int, msg='Wrong answer code')
         self.assertEqual('application/json', response.content_type)
         self.assertIsNotNone(response.charset)
         self.assertIn('Malformed Data', response.normal_body.decode(encoding=response.charset))
 
     def test_AlgorithmsHandler_POSTError400NoBody(self):
-        response = self.testapp.post('/', content_type='application/json', expect_errors=True)
+        response = self.testapp.post('/', content_type='application/json; charset=utf-8', expect_errors=True)
         self.assertEqual(400, response.status_int, msg='Wrong answer code')
         self.assertEqual('application/json', response.content_type)
         self.assertIsNotNone(response.charset)
@@ -544,7 +544,6 @@ class SearchTestCaseUnittest(unittest.TestCase):
         self.assertEqual(0, len(result.results), msg='The database is not empty')
         algorithm = search_algorithm.get_algorithm(index, searched_id)
         self.assertEqual(1, algorithm, msg='Non existent Algorithm was found in empty database')
-
 
     def test_query_algorithms_101Algorithms_(self):
         """Tests if 101 algorithms without query string are returned from database containing only 101 algorithms
