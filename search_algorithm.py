@@ -187,7 +187,8 @@ class AlgorithmsIdHandler(webapp2.RequestHandler):
                 json.dump(data, self.response.out)
             self.response.headers.add_header("Access-Control-Allow-Origin", "*")
             self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
-            self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+            self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization,' +
+                                             ' x-requested-with, Total-Count, Total-Pages, Error-Message')
             self.response.headers['Content-Type'] = 'application/json'
         else:
             data = {
@@ -198,7 +199,8 @@ class AlgorithmsIdHandler(webapp2.RequestHandler):
             self.response.headers.add_header("Access-Control-Allow-Origin", "*")
             self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
             self.response.headers.add_header('Access-Control-Allow-Headers',
-                                             'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+                                             'Content-Type, api_key, Authorization, x-requested-with, Total-Count,' +
+                                             ' Total-Pages, Error-Message')
             self.response.headers['Content-Type'] = 'application/json'
             self.response.status = 400
             json.dump(data, self.response.out)
@@ -219,7 +221,8 @@ class AlgorithmsIdHandler(webapp2.RequestHandler):
                 json.dump(data, self.response.out)
             self.response.headers.add_header("Access-Control-Allow-Origin", "*")
             self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
-            self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+            self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization,' +
+                                             ' x-requested-with, Total-Count, Total-Pages, Error-Message')
             self.response.headers['Content-Type'] = 'application/json'
         else:
             data = {
@@ -230,7 +233,8 @@ class AlgorithmsIdHandler(webapp2.RequestHandler):
             self.response.headers.add_header("Access-Control-Allow-Origin", "*")
             self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
             self.response.headers.add_header('Access-Control-Allow-Headers',
-                                             'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+                                             'Content-Type, api_key, Authorization, x-requested-with, Total-Count,' +
+                                             ' Total-Pages, Error-Message')
             self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
             self.response.status = 400
             json.dump(data, self.response.out)
@@ -251,7 +255,9 @@ class AlgorithmsHandler(webapp2.RequestHandler):
                 json.dump(algorithms_list, self.response.out)
                 self.response.headers.add_header("Access-Control-Allow-Origin", "*")
                 self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
-                self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+                self.response.headers.add_header('Access-Control-Allow-Headers',
+                                                 'Content-Type, api_key, Authorization, x-requested-with, ' +
+                                                 'Total-Count, Total-Pages, Error-Message')
                 self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
                 self.response.status = 200
             else:
@@ -263,7 +269,8 @@ class AlgorithmsHandler(webapp2.RequestHandler):
                 self.response.headers.add_header("Access-Control-Allow-Origin", "*")
                 self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
                 self.response.headers.add_header('Access-Control-Allow-Headers',
-                                                 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+                                                 'Content-Type, api_key, Authorization, x-requested-with, ' +
+                                                 'Total-Count, Total-Pages, Error-Message')
                 self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
                 self.response.status = 400
                 json.dump(data, self.response.out)
@@ -273,7 +280,8 @@ class AlgorithmsHandler(webapp2.RequestHandler):
             self.response.headers.add_header("Access-Control-Allow-Origin", "*")
             self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
             self.response.headers.add_header('Access-Control-Allow-Headers',
-                                             'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+                                             'Content-Type, api_key, Authorization, x-requested-with, Total-Count,' +
+                                             ' Total-Pages, Error-Message')
             self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
             self.response.status = 200
 
@@ -291,7 +299,8 @@ class AlgorithmsHandler(webapp2.RequestHandler):
                 self.response.headers.add_header("Access-Control-Allow-Origin", "*")
                 self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
                 self.response.headers.add_header('Access-Control-Allow-Headers',
-                                                 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+                                                 'Content-Type, api_key, Authorization, x-requested-with, ' +
+                                                 'Total-Count, Total-Pages, Error-Message')
                 self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
                 self.response.status = 400
                 json.dump(data, self.response.out)
@@ -312,7 +321,8 @@ class AlgorithmsHandler(webapp2.RequestHandler):
                 self.response.headers.add_header("Access-Control-Allow-Origin", "*")
                 self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
                 self.response.headers.add_header('Access-Control-Allow-Headers',
-                                                 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+                                                 'Content-Type, api_key, Authorization, x-requested-with, ' +
+                                                 'Total-Count, Total-Pages, Error-Message')
                 self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
                 self.response.status = 400
                 json.dump(data, self.response.out)
@@ -325,7 +335,8 @@ class AlgorithmsHandler(webapp2.RequestHandler):
             }
             self.response.headers.add_header("Access-Control-Allow-Origin", "*")
             self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
-            self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message')
+            self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization,' +
+                                             ' x-requested-with, Total-Count, Total-Pages, Error-Message')
             self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
             self.response.status = 400
             json.dump(data, self.response.out)
