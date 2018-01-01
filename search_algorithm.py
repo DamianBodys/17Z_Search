@@ -352,6 +352,10 @@ class AlgorithmsHandler(webapp2.RequestHandler):
         Just to clear database for testing purposes.
         """
         del_all(search.Index(name=_INDEX_STRING))
+        self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+        self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+        self.response.headers.add_header('Access-Control-Allow-Headers', 'Content-Type, api_key, Authorization,' +
+                                         ' x-requested-with, Total-Count, Total-Pages, Error-Message')
         self.response.status = 200
 
 
