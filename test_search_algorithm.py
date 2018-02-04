@@ -272,7 +272,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         self.assertEqual('aSummary', test_document.field('algorithmSummary').value)
         self.assertEqual('dName', test_document.field('displayName').value)
         self.assertEqual('lURL', test_document.field('linkURL').value)
-        self.assertGreater(datetime.now(), test_document.field('date').value)
+        self.assertGreaterEqual(datetime.now(), test_document.field('date').value)
 
     def test_AlgorithmsHandler_POSTError400WrongContentType(self):
         data={}
@@ -638,7 +638,7 @@ class SearchTestCaseUnittest(unittest.TestCase):
         self.assertEqual(algorithm_summary, test_document.field('algorithmSummary').value)
         self.assertEqual(display_name, test_document.field('displayName').value)
         self.assertEqual(link_url, test_document.field('linkURL').value)
-        self.assertGreater(datetime.now(), test_document.field('date').value)
+        self.assertGreaterEqual(datetime.now(), test_document.field('date').value)
 
     def test_del_all_from101algorithms(self):
         """Tests if all algorithms are deleted from database containing 101 algorithms
