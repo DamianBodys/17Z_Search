@@ -174,7 +174,7 @@ class DatasetsIdHandler(webapp2.RequestHandler):
     def get(self, dataset_id):
         if is_dataset_id(dataset_id):
             dataset = get_dataset(search.Index(name=_INDEX_STRING), dataset_id)
-            if dataset!= 1:
+            if dataset != 1:
                 json.dump(dataset, self.response.out)
                 self.response.headers.add_header("Access-Control-Allow-Origin", "*")
                 self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
@@ -376,7 +376,7 @@ def handle_404(request, response, exception):
 
 
 application = webapp2.WSGIApplication(
-    [('/', DatasetsHandler), ('/datasets/(.+)', DatasetsIdHandler)],
+    [('/datasets/', DatasetsHandler), ('/datasets/(.+)', DatasetsIdHandler)],
     debug=True)
 
 application.error_handlers[404] = handle_404

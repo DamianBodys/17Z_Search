@@ -376,7 +376,7 @@ def handle_404(request, response, exception):
 
 
 application = webapp2.WSGIApplication(
-    [('/', AlgorithmsHandler), ('/algorithms/(.+)', AlgorithmsIdHandler)],
+    [('/algorithms/', AlgorithmsHandler), ('/algorithms/(.+)', AlgorithmsIdHandler)],
     debug=True)
 
 application.error_handlers[404] = handle_404
