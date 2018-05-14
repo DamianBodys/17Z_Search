@@ -68,7 +68,7 @@ paths:
           description: Algorithm not deleted
           schema:
             $ref: '#/definitions/Error'
-  /:
+  /algorithms/:
     get:
       tags:
         - Algorithms
@@ -143,6 +143,138 @@ paths:
           description: No authentication. Need to login.
         '403':
           description: Not authorized to delete all algorithms
+  '/datasets/{datasetID}':
+    get:
+      tags:
+        - Datasets
+      summary: Single Dataset data
+      description: >-
+        The Dataset Details endpoint returns detailed description of a given
+        dataset.
+      operationId: DatasetsIdHandler.get
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: datasetID
+          in: path
+          description: ID of a dataset
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Details of the dataset
+          schema:
+            $ref: '#/definitions/Datasets'
+        '400':
+          description: Malformed data
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: The given datasetID was not found in collection
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      tags:
+        - Datasets
+      summary: Delete single Dataset
+      description: Deletes dataset data by datasetId
+      operationId: DatasetsIdHandler.delete
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: datasetID
+          in: path
+          description: ID of a dataset
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Deleted or not present
+          schema:
+            $ref: '#/definitions/Datasets'
+        '400':
+          description: Malformed data
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Dataset not deleted
+          schema:
+            $ref: '#/definitions/Error'
+  /datasets/:
+    get:
+      tags:
+        - Datasets
+      summary: The Datasets endpoint returns information about the available datasets.
+      description: >-
+        The Datasets endpoint returns information about the available datasets.
+        The response includes the display name and other details about each
+        dataset. It also allows full-text search of tags.
+      operationId: DatasetsHandler.get
+      consumes: []
+      produces:
+        - application/json
+      parameters:
+        - name: query
+          in: query
+          description: Tags for search query.
+          required: false
+          type: string
+          x-example: sum subtract
+      responses:
+        '200':
+          description: An array of datasets
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Datasets'
+        '400':
+          description: Malformed data
+          schema:
+            $ref: '#/definitions/Error'
+    post:
+      tags:
+        - Datasets
+      summary: Add a new Dataset
+      description: Add a new Dataset
+      operationId: DatasetsHandler.post
+      consumes:
+        - application/json
+      produces: []
+      parameters:
+        - in: body
+          name: body
+          required: false
+          schema:
+            $ref: '#/definitions/Datasets'
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Malformed data
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: No authentication. Need to login.
+        '403':
+          description: Not authorized to post new datasets
+    delete:
+      tags:
+        - Datasets
+      summary: Delete all Datasets
+      description: Clear database for testing and debuging purposes only
+      operationId: DatasetsHandler.delete
+      consumes: []
+      produces: []
+      parameters: []
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: No authentication. Need to login.
+        '403':
+          description: Not authorized to delete all algorithms
 definitions:
   Algorithms:
     type: object
@@ -159,6 +291,21 @@ definitions:
       linkURL:
         type: string
         description: detailed url of the algorithm.
+  Datasets:
+    type: object
+    properties:
+      datasetId:
+        type: string
+        description: Unique identifier representing a specific dataset.
+      datasetSummary:
+        type: string
+        description: Brief summary of the dataset.
+      displayName:
+        type: string
+        description: Display name of the dataset.
+      linkURL:
+        type: string
+        description: detailed url of the dataset.
   Error:
     type: object
     properties:
