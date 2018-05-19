@@ -11,6 +11,7 @@ sys.path.insert(1, '/root/Downloads/google-cloud-sdk/platform/google_appengine/l
 """
 import unittest
 import webtest
+import main
 import search_algorithm
 import json
 from google.appengine.ext import testbed
@@ -46,7 +47,7 @@ def create_test_documents_list(data_list, documents, length):
 
 class SearchTestCaseErrorHandlers(unittest.TestCase):
     def setUp(self):
-        self.testapp = webtest.TestApp(search_algorithm.application)
+        self.testapp = webtest.TestApp(main.application)
         self.testbed = testbed.Testbed()
         self.testbed.activate()
 
@@ -65,7 +66,7 @@ class SearchTestCaseErrorHandlers(unittest.TestCase):
 
 class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
     def setUp(self):
-        self.testapp = webtest.TestApp(search_algorithm.application)
+        self.testapp = webtest.TestApp(main.application)
         self.testbed = testbed.Testbed()
         self.testbed.activate()
         self.testbed.init_search_stub()
@@ -77,19 +78,18 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         """
         Tests if empty database is returned
         """
-        response = self.testapp.get('/')
+        response = self.testapp.get('/algorithms/')
         self.assertEqual(200, response.status_int)
         self.assertIsNotNone(response.charset)
         self.assertEqual('[]', response.normal_body.decode(encoding=response.charset))
         self.assertEqual('application/json', response.content_type)
-
 
     def test_AlgorithmsHandler_GETMalformedQuery(self):
         """
         Tests if 400 is returned if there is no query= in uri while there is "?" after "/" indicating there are paramete-
         rs to be expected
         """
-        response = self.testapp.get('/?qqry=algorithm', expect_errors=True)
+        response = self.testapp.get('/algorithms/?qqry=algorithm', expect_errors=True)
         self.assertEqual(400, response.status_int)
         self.assertIsNotNone(response.charset)
         self.assertIn('Malformed Data', response.normal_body.decode(encoding=response.charset))
@@ -107,7 +107,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
                                                     right_list[0]['displayName'],
                                                     right_list[0]['linkURL'])
         search.Index(name=search_algorithm._INDEX_STRING).put(document)
-        response = self.testapp.get('/')
+        response = self.testapp.get('/algorithms/')
         self.assertEqual(200, response.status_int)
         self.assertIsNotNone(response.charset)
         self.assertListEqual(right_list, json.loads(response.normal_body.decode(encoding=response.charset)))
@@ -127,7 +127,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
                                                         right_list[i]['displayName'],
                                                         right_list[i]['linkURL'])
             search.Index(name=search_algorithm._INDEX_STRING).put(document)
-        response = self.testapp.get('/')
+        response = self.testapp.get('/algorithms/')
         self.assertEqual(200, response.status_int)
         self.assertIsNotNone(response.charset)
         self.assertItemsEqual(right_list, json.loads(response.normal_body.decode(encoding=response.charset)))
@@ -147,7 +147,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
                                                         right_list[i]['displayName'],
                                                         right_list[i]['linkURL'])
             search.Index(name=search_algorithm._INDEX_STRING).put(document)
-        response = self.testapp.get('/')
+        response = self.testapp.get('/algorithms/')
         self.assertEqual(200, response.status_int, msg='The response was other then 200 OK')
         self.assertIsNotNone(response.charset)
         self.assertItemsEqual(right_list, json.loads(response.normal_body.decode(encoding=response.charset)),
@@ -171,7 +171,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
                                                         right_list[i]['displayName'],
                                                         right_list[i]['linkURL'])
             search.Index(name=search_algorithm._INDEX_STRING).put(document)
-        response = self.testapp.get('/')
+        response = self.testapp.get('/algorithms/')
         self.assertEqual(200, response.status_int)
         self.assertIsNotNone(response.charset)
         self.assertItemsEqual(right_list, json.loads(response.normal_body.decode(encoding=response.charset)))
@@ -194,7 +194,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         index = search.Index(name=search_algorithm._INDEX_STRING)
         index.put(documents)
         # End of data preparation
-        response = self.testapp.get('/?query=' + query_string)
+        response = self.testapp.get('/algorithms/?query=' + query_string)
         self.assertIsNotNone(response.charset)
         result = json.loads(response.normal_body.decode(encoding=response.charset))
         self.assertEqual(200, len(result), msg='Wrong number of algorithms')
@@ -220,7 +220,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         data['linkURL'] = 'linkURL' + number
         right_answer_list = [data]
         # end right answer list preparation
-        response = self.testapp.get('/?query=' + query_string)
+        response = self.testapp.get('/algorithms/?query=' + query_string)
         self.assertIsNotNone(response.charset)
         result = json.loads(response.normal_body.decode(encoding=response.charset))
         self.assertEqual(1, len(result), msg='Wrong number of algorithms')
@@ -248,7 +248,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
             data['linkURL'] = 'linkURL' + number
             right_answer_list.append(data)
         # end right answer list preparation
-        response = self.testapp.get('/?query=' + query_string)
+        response = self.testapp.get('/algorithms/?query=' + query_string)
         self.assertIsNotNone(response.charset)
         result = json.loads(response.normal_body.decode(encoding=response.charset))
         self.assertEqual(len(right_answer_list), len(result), msg='Wrong number of algorithms')
@@ -261,7 +261,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         data['displayName'] = 'dName'
         data['linkURL'] = 'lURL'
         input_json = json.dumps(data)
-        response = self.testapp.post('/', params=input_json, content_type='application/json; charset=utf-8')
+        response = self.testapp.post('/algorithms/', params=input_json, content_type='application/json; charset=utf-8')
         self.assertEqual(200, response.status_int, msg='Wrong answer code')
         # get data from search
         index = search.Index(name=search_algorithm._INDEX_STRING)
@@ -281,7 +281,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         data['displayName'] = 'dName'
         data['linkURL'] = 'lURL'
         input_json = json.dumps(data)
-        response = self.testapp.post('/', params=input_json, content_type='text/html; charset=utf-8', expect_errors=True)
+        response = self.testapp.post('/algorithms/', params=input_json, content_type='text/html; charset=utf-8', expect_errors=True)
         self.assertEqual(400, response.status_int, msg='Wrong answer code')
         self.assertEqual('application/json', response.content_type)
         self.assertIsNotNone(response.charset)
@@ -294,14 +294,14 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         data['displayName'] = 'dName'
         data['linkURL'] = 'lURL'
         input_json = json.dumps(data)
-        response = self.testapp.post('/', params=input_json, content_type='application/json; charset=utf-8', expect_errors=True)
+        response = self.testapp.post('/algorithms/', params=input_json, content_type='application/json; charset=utf-8', expect_errors=True)
         self.assertEqual(400, response.status_int, msg='Wrong answer code')
         self.assertEqual('application/json', response.content_type)
         self.assertIsNotNone(response.charset)
         self.assertIn('Malformed Data', response.normal_body.decode(encoding=response.charset))
 
     def test_AlgorithmsHandler_POSTError400NoBody(self):
-        response = self.testapp.post('/', content_type='application/json; charset=utf-8', expect_errors=True)
+        response = self.testapp.post('/algorithms/', content_type='application/json; charset=utf-8', expect_errors=True)
         self.assertEqual(400, response.status_int, msg='Wrong answer code')
         self.assertEqual('application/json', response.content_type)
         self.assertIsNotNone(response.charset)
@@ -318,7 +318,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
         index.put(documents)
         result = index.get_range(ids_only=True)
         self.assertLess(0, len(result.results), msg='There ware no algorithms present before DELETE')
-        response = self.testapp.delete('/')
+        response = self.testapp.delete('/algorithms/')
         self.assertEqual(200, response.status_int, msg='Wrong response code')
         result = index.get_range(ids_only=True)
         self.assertEqual(0, len(result.results), msg='There ware algorithms present after DELETE')
@@ -326,7 +326,7 @@ class SearchTestCaseAlgorithmsHandler(unittest.TestCase):
 
 class SearchTestCaseAlgorithmsIdHandler(unittest.TestCase):
     def setUp(self):
-        self.testapp = webtest.TestApp(search_algorithm.application)
+        self.testapp = webtest.TestApp(main.application)
         self.testbed = testbed.Testbed()
         self.testbed.activate()
         self.testbed.init_search_stub()
