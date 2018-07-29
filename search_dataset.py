@@ -304,8 +304,23 @@ class DatasetsHandler(webapp2.RequestHandler):
                                            data['datasetSummary'],
                                            data['displayName'],
                                            data['linkURL'])
-                search.Index(name=_INDEX_STRING).put(document)
-                self.response.status = 200
+                put_result = search.Index(name=_INDEX_STRING).put(document)
+                if put_result[0].code == 'OK': #If code of the result other then OK then something wrong happened during document upload to FTS
+                    self.response.status = 200
+                else:
+                    data = {
+                        "code": 400,
+                        "fields": "string",
+                        "message": "Malformed Data"
+                    }
+                    self.response.headers.add_header("Access-Control-Allow-Origin", "*")
+                    self.response.headers.add_header('Access-Control-Allow-Methods', 'POST, GET, DELETE, PUT, OPTIONS')
+                    self.response.headers.add_header('Access-Control-Allow-Headers',
+                                                     'Content-Type, api_key, Authorization, x-requested-with, ' +
+                                                     'Total-Count, Total-Pages, Error-Message')
+                    self.response.headers['Content-Type'] = 'application/json; charset=utf-8'
+                    self.response.status = 400
+                    json.dump(data, self.response.out)
             else:
                 data = {
                     "code": 400,
