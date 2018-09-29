@@ -4,10 +4,11 @@ import os
 
 
 def get_search_url():
-    if os.environ.get('SERVER_SOFTWARE').startswith('Google App Engine'):
-        return os.environ.get('HTTP_ORIGIN')
-    else:
-        return 'http://localhost:8080'
+    return 'https://zsearch1.appspot.com'
+#   if os.environ.get('CLOUD_SHELL').startswith('true'):
+ #       return 'https://' + os.environ.get('GOOGLE_CLOUD_PROJECT') +
+  #  else:
+   #     return 'http://localhost:8080'
 
 
 class SwaggerHandler(webapp2.RequestHandler):
